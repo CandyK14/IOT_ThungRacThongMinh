@@ -7,8 +7,8 @@ const usable=b=>b.usable;
 const color=b=>!usable(b)?'#89968b':b.fill_pct>=b.full_on_pct?'#bf503b':b.fill_pct>=b.full_off_pct?'#c78d32':'#347655';
 const sourceLabel=s=>s==='real'?'Thiết bị thật':'MÔ PHỎNG';
 async function api(url,options={}){const r=await fetch(url,{...options,headers:{'Content-Type':'application/json',...options.headers}});let body;try{body=await r.json();}catch{throw Error('Backend trả phản hồi không hợp lệ');}if(!r.ok){if(r.status===401 && url!=='/api/login'){showLogin();}throw Error(typeof body.detail==='string'?body.detail:`Yêu cầu thất bại (${r.status})`);}return body;}
-function showLogin(){$('application').hidden=true;$('login-panel').hidden=false;user=null;}
-async function showApp(u){user=u;$('login-panel').hidden=true;$('application').hidden=false;$('account-name').textContent=`${u.username} · ${u.role==='manager'?'Quản lý':'Người xem'}`;$('route-button').disabled=u.role!=='manager';await refresh();}
+function showLogin(){$('application').hidden=true;$('login-panel').hidden=false;user=null;window.SmartBinLab?.setUser(null);}
+async function showApp(u){user=u;$('login-panel').hidden=true;$('application').hidden=false;$('account-name').textContent=`${u.username} · ${u.role==='manager'?'Quản lý':'Người xem'}`;$('route-button').disabled=u.role!=='manager';window.SmartBinLab?.setUser(u);await refresh();}
 $('login-form').addEventListener('submit',async e=>{e.preventDefault();const button=e.target.querySelector('button');button.disabled=true;$('login-error').textContent='';try{const u=await api('/api/login',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});e.target.reset();await showApp(u);}catch(err){$('login-error').textContent=err.message;}finally{button.disabled=false;}});
 $('logout').onclick=async()=>{try{await api('/api/logout',{method:'POST'});}finally{showLogin();}};
 function filtered(){const search=$('search').value.toLowerCase(),status=$('status').value,source=$('source').value;return bins.filter(b=>(source==='all'||b.source===source)&&`${b.id} ${b.name}`.toLowerCase().includes(search)&&(status==='all'||status==='full'&&usable(b)&&b.fill_pct>=b.full_on_pct||status==='offline'&&!b.online||status==='fault'&&(b.quality==='fault'||b.lid_state==='FAULT')||status==='unknown'&&!usable(b)));}
@@ -32,4 +32,5 @@ for(const id of ['search','status','source','heat'])$(id).addEventListener('inpu
 $('refresh').onclick=refresh;$('history-refresh').onclick=()=>selected&&detail(selected);
 window.addEventListener('resize',()=>{if(user){render();if(selected)detail(selected);}});
 setInterval(()=>{if(user)refresh();},30000);
+window.SmartBinLab?.configure({refresh:()=>refresh(),select:async id=>{selected=id;await refresh();$('detail-title').closest('.details').scrollIntoView({behavior:'smooth',block:'start'});}});
 api('/api/me').then(showApp).catch(showLogin);

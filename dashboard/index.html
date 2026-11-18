@@ -1,19 +1,108 @@
 <!doctype html>
 <html lang="vi">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vòng Xanh · Điều phối thu gom</title><link rel="stylesheet" href="/static/style.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vòng Xanh · Điều phối thu gom</title><link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/simulation.css"></head>
 <body>
 <section id="login-panel" class="login"><form id="login-form"><div class="brand">◉ VÒNG XANH</div><p class="eyebrow">HỆ THỐNG THÙNG RÁC THÔNG MINH</p><h1>Theo dõi hôm nay.<br>Thu gom đúng lúc.</h1><p>Đăng nhập để xem số đo, dự báo và tuyến thu gom.</p><label>Tài khoản<input name="username" autocomplete="username" required maxlength="64"></label><label>Mật khẩu<input name="password" type="password" autocomplete="current-password" required maxlength="256"></label><button type="submit">Đăng nhập <span>↗</span></button><p id="login-error" role="alert"></p><small>Tạo tài khoản bằng lệnh <code>python -m backend.cli user admin</code> theo README.</small></form></section>
 <div id="application" hidden>
-<header><a class="brand" href="/">◉ VÒNG XANH</a><nav>Điều phối <span>/</span> Tổng quan</nav><div class="account"><span id="account-name"></span><button id="logout" class="quiet">Đăng xuất</button></div></header>
+<header><a class="brand" href="/">◉ VÒNG XANH</a><nav><a href="#simulation">Mô phỏng</a><span>/</span><a href="#overview">Tổng quan</a></nav><div class="account"><span id="account-name"></span><button id="logout" class="quiet">Đăng xuất</button></div></header>
 <main>
 <div class="title-row"><div><p class="eyebrow">GIÁM SÁT & ĐIỀU PHỐI</p><h1>Mỗi chuyến đi, đúng thời điểm.</h1><p class="muted">Mức đầy từ cảm biến · Dự báo có nhãn · Thu gom có ràng buộc</p></div><div class="refresh"><span id="updated">Đang tải dữ liệu…</span><button id="refresh" class="quiet">↻ Cập nhật</button></div></div>
 <div id="error" class="banner error" role="alert" hidden></div><div id="source-note" class="banner">Nguồn dữ liệu được ghi riêng trên từng thùng. Mô phỏng phục vụ minh họa, chưa xác minh trên thiết bị.</div>
-<section class="metrics" aria-label="Chỉ số"><article><span>Tổng số thùng</span><strong id="total">—</strong><small>Trong bộ lọc hiện tại</small></article><article><span>Cần thu gom</span><strong id="full">—</strong><small>Số đo đạt ngưỡng của từng thùng</small></article><article><span>Mất kết nối</span><strong id="offline">—</strong><small>Không có bản tin mới ≤6 phút</small></article><article><span>Cần kiểm tra</span><strong id="fault">—</strong><small>Lỗi, dữ liệu cũ hoặc chưa biết</small></article></section>
+
+<section id="simulation" class="lab panel" aria-labelledby="lab-title">
+  <div class="lab-heading"><div><p class="eyebrow">PHÒNG THỬ NGHIỆM TƯƠNG TÁC</p><h2 id="lab-title">Một thùng rác. Cả một chu kỳ vận hành.</h2><p>Đưa tay, bỏ rác, rồi xem hệ thống tự mở nắp và báo đầy.</p></div><span class="lab-source"><i></i> MÔ PHỎNG TRÌNH DUYỆT</span></div>
+  <div class="lab-layout">
+    <div class="lab-visual">
+      <div class="lab-scene-top"><span id="lab-running"><i></i> Đang chạy · 1×</span><button id="lab-pause" class="lab-small" type="button" aria-pressed="false">Tạm dừng</button></div>
+      <div class="lab-scene" role="img" aria-label="Minh họa mặt cắt thùng rác, nắp, cảm biến và màn LED mức đầy mô phỏng">
+      <svg id="lab-scene-svg" viewBox="0 0 540 490" aria-hidden="true">
+        <defs>
+          <linearGradient id="lab-body-gradient" x1="0" x2="1"><stop stop-color="#315b46"/><stop offset=".45" stop-color="#5f8065"/><stop offset="1" stop-color="#214533"/></linearGradient>
+          <linearGradient id="lab-lid-gradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a9c38b"/><stop offset="1" stop-color="#45684c"/></linearGradient>
+          <linearGradient id="lab-glass-gradient" x1="0" x2="1"><stop stop-color="#e3eddb" stop-opacity=".3"/><stop offset=".55" stop-color="#d6e8c4" stop-opacity=".06"/><stop offset="1" stop-color="#c7ddbb" stop-opacity=".2"/></linearGradient>
+          <radialGradient id="lab-scene-glow"><stop stop-color="#e4edcf"/><stop offset="1" stop-color="#f1f4ec" stop-opacity="0"/></radialGradient>
+          <pattern id="lab-floor-grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#dbe4d2" stroke-width=".7"/></pattern>
+          <pattern id="lab-waste-pattern" width="63" height="44" patternUnits="userSpaceOnUse"><rect width="63" height="44" fill="#bab386"/><path d="M2 8L22 4L29 20L8 25Z" fill="#e6d5a4" stroke="#a69d73"/><path d="M40 2L50 4L48 12L53 17L50 31L37 28L38 16L42 11Z" fill="#9bb7a5" stroke="#688777"/><path d="M9 37L24 27L33 35L24 44Z" fill="#dcb178" stroke="#b38a59"/><ellipse cx="58" cy="38" rx="12" ry="7" fill="#c4d3c0" stroke="#8caa92"/></pattern>
+          <clipPath id="lab-front-window"><path d="M183 233Q268 252 350 232L336 400Q268 421 198 400Z"/></clipPath>
+          <clipPath id="lab-fill-clip"><rect id="lab-fill-clip-rect" x="175" y="365" width="185" height="48"/></clipPath>
+          <filter id="lab-shadow"><feGaussianBlur stdDeviation="9"/></filter>
+        </defs>
+        <ellipse cx="265" cy="265" rx="242" ry="220" fill="url(#lab-scene-glow)"/>
+        <path d="M30 395L290 287L520 391L260 490Z" fill="url(#lab-floor-grid)" opacity=".7"/>
+        <ellipse cx="270" cy="443" rx="136" ry="20" fill="#163a24" opacity=".16" filter="url(#lab-shadow)"/>
+        <g id="lab-hand" opacity=".2" transform="translate(70 0)">
+          <path d="M451 165L430 147Q422 141 417 149Q413 153 418 159L429 171L400 161Q391 159 390 166Q388 172 396 176L425 189L435 211Q441 221 455 222L479 218L504 181L483 169Q472 164 461 170Z" fill="#e6cdb5" stroke="#ac8f76" stroke-width="2"/>
+          <path d="M426 172L441 180M426 188L443 190" stroke="#b2937a" stroke-width="2" fill="none"/>
+          <path d="M479 215L497 223L519 187L504 178Z" fill="#526f5e"/>
+        </g>
+        <g id="lab-sensor-waves" fill="none" stroke="#a5c4b1" stroke-width="2" opacity=".2"><path d="M360 194Q376 204 365 218"/><path d="M372 186Q396 204 380 228"/><path d="M385 178Q417 202 394 237"/></g>
+        <ellipse cx="265" cy="194" rx="121" ry="35" fill="#1b3526" stroke="#34553d" stroke-width="6"/>
+        <path d="M146 194Q266 245 386 194L365 415Q264 462 166 415Z" fill="url(#lab-body-gradient)" stroke="#2e5139" stroke-width="2"/>
+        <path d="M359 218L344 415" stroke="#9eb78c" stroke-opacity=".32" stroke-width="3"/>
+        <path d="M164 217L181 416" stroke="#183b29" stroke-opacity=".5" stroke-width="3"/>
+        <g clip-path="url(#lab-front-window)">
+          <rect x="175" y="227" width="185" height="188" fill="#203e2e"/>
+          <g clip-path="url(#lab-fill-clip)"><rect x="175" y="227" width="185" height="188" fill="url(#lab-waste-pattern)"/></g>
+          <path d="M180 268H350" stroke="#dcc987" stroke-width="1.4" stroke-dasharray="5 5" opacity=".8"/>
+          <path d="M183 233Q268 252 350 232L336 400Q268 421 198 400Z" fill="url(#lab-glass-gradient)"/>
+          <path d="M193 238L208 401" stroke="white" stroke-opacity=".17" stroke-width="5"/>
+        </g>
+        <path d="M183 233Q268 252 350 232L336 400Q268 421 198 400Z" fill="none" stroke="#b9caaa" stroke-opacity=".5" stroke-width="1.5"/>
+        <g fill="#bed0b4" font-family="Segoe UI,Arial" font-size="10"><text x="305" y="264">80%</text><text x="238" y="439" letter-spacing="2">VÒNG XANH</text></g>
+        <g><rect x="298" y="207" width="50" height="18" rx="7" fill="#193d2c"/><circle id="lab-led-red" cx="312" cy="216" r="4" fill="#6c5b42"/><circle id="lab-led-green" cx="333" cy="216" r="4" fill="#6c5b42"/></g>
+        <g id="lab-display" data-tone="waiting" font-family="Segoe UI,Arial" text-anchor="middle">
+          <rect x="207" y="296" width="122" height="94" rx="9" fill="#182e27" stroke="#8da48c" stroke-width="2"/>
+          <rect x="214" y="303" width="108" height="80" rx="5" fill="#091b15"/>
+          <text x="268" y="317" font-size="8" fill="#9ebba6" letter-spacing="1">MỨC ĐẦY ĐO ĐƯỢC</text>
+          <text id="lab-display-value" x="268" y="346" font-family="Consolas,monospace" font-size="26" font-weight="700" fill="#d0e78d">—</text>
+          <text id="lab-display-state" x="268" y="361" font-size="8" fill="#c2d6bd">CHỜ ĐO</text>
+          <text id="lab-display-fault" x="268" y="375" font-size="7" fill="#edc994">Chưa có lỗi xác nhận</text>
+        </g>
+        <g id="lab-lid" transform="rotate(0 386 181)"><path d="M135 170Q263 121 395 168L397 186Q267 243 135 188Z" fill="#294b34" stroke="#264630" stroke-width="2"/><ellipse cx="266" cy="171" rx="130" ry="40" fill="url(#lab-lid-gradient)" stroke="#466a46" stroke-width="2"/><ellipse cx="266" cy="165" rx="103" ry="26" fill="none" stroke="#c2d5a8" stroke-opacity=".45" stroke-width="2"/><rect x="241" y="149" width="49" height="12" rx="5" fill="#284d35"/><path d="M243 151H288" stroke="#91aa7c" stroke-width="2"/></g>
+        <g><ellipse cx="192" cy="433" rx="15" ry="19" fill="#263a30"/><ellipse cx="192" cy="433" rx="7" ry="11" fill="#718376"/><ellipse cx="345" cy="433" rx="15" ry="19" fill="#263a30"/><ellipse cx="345" cy="433" rx="7" ry="11" fill="#718376"/></g>
+        <g fill="#68816b" font-family="Segoe UI,Arial" font-size="11"><text x="42" y="258">MẶT CẮT</text><path d="M43 269H110L176 297" fill="none" stroke="#a6b89b"/><text x="44" y="291" id="lab-scene-fill">Rác đặt: 22%</text><text x="343" y="127" id="lab-scene-hand">Tay: 100 cm</text></g>
+      </svg>
+      </div>
+      <p id="lab-display-description" class="lab-hint" role="status">LED: chờ số đo hợp lệ.</p>
+      <div class="lab-quick-stats"><div><span>Trạng thái nắp</span><strong id="lab-lid-state">Đóng</strong></div><div><span>Góc servo mô phỏng</span><strong id="lab-servo">0°</strong></div><div><span>Mức đầy đo được</span><strong id="lab-measured">—</strong></div><div><span>Cảnh báo</span><strong id="lab-alert-state">Đang khởi tạo</strong></div></div>
+      <div class="lab-progress"><div><span id="lab-stage">Sẵn sàng cho một chu kỳ thử</span><span id="lab-clock">00:00</span></div><div class="lab-progress-track"><span id="lab-progress-bar"></span></div></div>
+    </div>
+    <div class="lab-controls">
+      <div id="lab-wifi-card" class="lab-wifi-card" data-state="local">
+        <div class="lab-wifi-heading"><span aria-hidden="true">◉</span><strong>Wi-Fi mô phỏng</strong><span id="lab-wifi-state" role="status">Sẵn sàng</span></div>
+        <p>Mạng: <strong>SmartBin_Demo</strong> · mô phỏng trong trình duyệt</p>
+        <button id="lab-wifi-toggle" type="button" class="quiet" aria-pressed="false">Ngắt Wi-Fi mô phỏng</button>
+        <p id="lab-wifi-note">Bật đồng bộ để backend giám sát kết nối.</p>
+      </div>
+
+      <div class="lab-control-title"><div><span class="lab-step">01</span><h3>Thử tự mở nắp</h3></div><span id="lab-hand-badge" class="lab-value">100 cm</span></div>
+      <label class="lab-field" for="lab-hand-range">Khoảng cách tay <input id="lab-hand-range" type="range" min="2" max="100" step="1" value="100"></label>
+      <div class="lab-range-labels"><span>Gần · 2 cm</span><span>Xa · 100 cm</span></div>
+      <button id="lab-hand-toggle" class="lab-primary" type="button" aria-pressed="false"><span>Đưa tay lại gần</span><span aria-hidden="true">↗</span></button>
+      <p class="lab-hint">Mở dưới 20 cm. Giữ mở dưới 25 cm, đóng sau 3 giây từ lần nhận tay cuối.</p>
+      <div class="lab-divider"></div>
+      <div class="lab-control-title"><div><span class="lab-step">02</span><h3>Bỏ rác & thu gom</h3></div><span id="lab-physical-badge" class="lab-value">22%</span></div>
+      <label class="lab-field" for="lab-fill-range">Mức rác đặt để thử cảm biến <input id="lab-fill-range" type="range" min="0" max="100" step="1" value="22"></label>
+      <div class="lab-range-labels"><span>Rỗng · 0%</span><span>Đầy · 100%</span></div>
+      <div class="lab-button-pair"><button id="lab-add" class="quiet" type="button" disabled>Bỏ rác +8%</button><button id="lab-collect" class="quiet" type="button">Thu gom</button></div>
+      <p id="lab-measure-note" class="lab-hint">Chờ bộ lọc nhận đủ số đo ban đầu.</p>
+      <div class="lab-divider"></div>
+      <div class="lab-control-title"><div><span class="lab-step">03</span><h3>Xem cả chu kỳ</h3></div></div>
+      <button id="lab-cycle" class="lab-cycle" type="button"><span aria-hidden="true">▷</span> Chạy chu kỳ tự động</button>
+      <p class="lab-hint">Đưa tay → mở nắp → bỏ rác → FULL → thu gom → CLEARED. Khoảng 25 giây, tốc độ 1×.</p>
+      <details class="lab-advanced"><summary>Thử lỗi & kết nối dashboard</summary><div class="lab-advanced-body"><label class="lab-check"><input id="lab-fault-hand" type="checkbox"> Giả lập lỗi cảm biến tay</label><label class="lab-check"><input id="lab-fault-fill" type="checkbox"> Giả lập lỗi cảm biến mức rác</label><label class="lab-check"><input id="lab-noise" type="checkbox"> Thêm nhiễu số đo</label><button id="lab-recover" class="quiet" type="button" disabled>Xác nhận phục hồi lỗi nắp</button><p class="lab-hint">Tắt lỗi và rút tay ra xa trước khi phục hồi nắp.</p><div class="lab-divider"></div><button id="lab-connect" class="quiet" type="button">Đồng bộ với dashboard</button><label class="lab-check"><input id="lab-offline" type="checkbox"> Giả lập mất Wi-Fi của thùng</label><p id="lab-sync-status" class="lab-hint" role="status">Bản xem trước trong trình duyệt. Người quản lý có thể lưu vào thùng lab riêng.</p><label class="lab-check"><input id="lab-telegram" type="checkbox" disabled> Gửi cảnh báo Telegram cho phiên này</label><p id="lab-telegram-status" class="lab-hint" role="status">Bật đồng bộ và cấu hình bot trên backend trước.</p><button id="lab-history-link" class="lab-text-button" type="button" hidden>Xem lịch sử thùng lab ↓</button></div></details>
+    </div>
+  </div>
+  <div class="lab-bottom"><div id="lab-notice" class="lab-notice" role="status"><span class="lab-notice-icon" aria-hidden="true">◎</span><div><strong id="lab-notice-title">Sẵn sàng để thử</strong><p id="lab-notice-text">Thao tác trên thùng hoặc chạy một chu kỳ tự động. Thông báo ở đây là bản xem trước, không gửi Telegram.</p></div><span id="lab-notice-tag" class="lab-notice-tag">XEM TRƯỚC</span></div><div class="lab-event-panel"><div><strong>Nhật ký tương tác</strong><span id="lab-event-count">0 sự kiện</span></div><ol id="lab-events" aria-label="Nhật ký các sự kiện mô phỏng"><li>Chưa có thao tác. Hãy đưa tay lại gần thùng.</li></ol></div></div>
+  <p class="lab-footnote">Mô hình minh họa logic trong trình duyệt, chưa chạy firmware hoặc xác minh cơ khí. Mọi bản ghi đồng bộ mang nhãn simulated; mặc định chỉ xem trước. Telegram cần cấu hình backend và bật riêng cho phiên này.</p>
+</section>
+
+<section id="overview" class="metrics" aria-label="Chỉ số"><article><span>Tổng số thùng</span><strong id="total">—</strong><small>Trong bộ lọc hiện tại</small></article><article><span>Cần thu gom</span><strong id="full">—</strong><small>Số đo đạt ngưỡng của từng thùng</small></article><article><span>Mất kết nối</span><strong id="offline">—</strong><small>Không có bản tin mới ≤6 phút</small></article><article><span>Cần kiểm tra</span><strong id="fault">—</strong><small>Lỗi, dữ liệu cũ hoặc chưa biết</small></article></section>
 <section class="filters"><label>Tìm thùng<input id="search" placeholder="Mã hoặc tên thùng"></label><label>Trạng thái<select id="status"><option value="all">Tất cả trạng thái</option><option value="full">Cần thu gom</option><option value="offline">Mất kết nối</option><option value="fault">Lỗi cảm biến / nắp</option><option value="unknown">Chưa có số đo mới hợp lệ</option></select></label><label>Nguồn<select id="source"><option value="all">Tất cả nguồn</option><option value="simulated">Mô phỏng</option><option value="real">Thiết bị thật</option></select></label><label class="check"><input id="heat" type="checkbox" checked> Lớp mức đầy</label></section>
 <section class="workspace"><article class="panel map-panel"><div class="panel-head"><div><p class="eyebrow">PHÂN BỐ KHÔNG GIAN</p><h2>Bản đồ tọa độ</h2></div><span class="pill">Ngoại tuyến</span></div><canvas id="map" aria-label="Bản đồ tọa độ các thùng, có thể bấm chọn"></canvas><div class="legend"><span>● Dưới ngưỡng xóa</span><span class="amber">● Giữa hai ngưỡng</span><span class="red">● Đạt ngưỡng đầy</span><span class="gray">○ Chưa biết / cũ / lỗi</span></div><p class="caption">Sơ đồ kinh/vĩ độ không có đường phố. Lớp màu có trọng số % mức đầy / 100, chỉ dùng số đo mới hợp lệ. Đường nối tuyến là khoảng cách địa lý mô phỏng.</p></article>
 <article class="panel priority"><div class="panel-head"><div><p class="eyebrow">THEO DÕI HIỆN TẠI</p><h2>Danh sách thùng</h2></div><span id="list-count" class="pill">0</span></div><div id="bin-list" class="bin-list"><p>Đang tải…</p></div></article></section>
 <section class="panel details"><div class="panel-head"><div><p class="eyebrow">LỊCH SỬ & DỰ BÁO</p><h2 id="detail-title">Chọn một thùng để xem</h2></div><div class="date-range"><label>Từ<input id="from-date" type="datetime-local"></label><label>Đến<input id="to-date" type="datetime-local"></label><button class="quiet" id="history-refresh">Xem</button></div></div><div id="detail-info" class="detail-info"></div><canvas id="history" aria-label="Biểu đồ lịch sử mức đầy"></canvas><p id="history-note" class="caption">Khoảng trống trên biểu đồ thể hiện số đo lỗi hoặc mẫu thiếu.</p><div id="event-list" class="events"></div></section>
 <section class="panel routing"><div class="panel-head"><div><p class="eyebrow">LẬP KẾ HOẠCH</p><h2>Tuyến thu gom</h2></div><span class="pill">OR-Tools · CVRP</span></div><p class="muted">Lít ước lượng từ % chiều cao, giả định rác phân bố đều. Xe quay về depot; số đo không biết được đưa vào danh sách kiểm tra.</p><form id="route-form"><label>Số xe<input name="vehicles" type="number" min="1" max="20" value="3" required></label><label>Sức chứa / xe (lít)<input name="capacity_l" type="number" min="1" max="100000" value="1000" required></label><label>Depot · vĩ độ<input name="depot_lat" type="number" step="any" min="-90" max="90" value="10.77" required></label><label>Depot · kinh độ<input name="depot_lon" type="number" step="any" min="-180" max="180" value="106.66" required></label><label class="check"><input name="include_predictions" type="checkbox"> Thêm dự báo còn hiệu lực</label><button id="route-button" type="submit">Lập tuyến ↗</button></form><p id="route-result" role="status">Người quản lý có thể lập tuyến. Chưa có tuyến được tính.</p><div id="route-list"></div></section>
 <footer><span>VÒNG XANH · Đồ án IoT</span><span id="service-state">Telegram mặc định dry-run · AI không điều khiển nắp</span></footer>
-</main></div><script src="/static/app.js" defer></script>
+</main></div><script src="/static/simulation-core.js" defer></script><script src="/static/simulation.js" defer></script><script src="/static/app.js" defer></script>
 </body></html>

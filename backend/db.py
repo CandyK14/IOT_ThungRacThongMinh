@@ -4,6 +4,9 @@ import sqlite3
 import time
 from contextlib import contextmanager
 
+from .notifications import format_notification
+from .connectivity import OFFLINE_SECONDS
+
 
 SCHEMA = '''
 CREATE TABLE IF NOT EXISTS schema_version(version INTEGER PRIMARY KEY);
@@ -69,7 +72,7 @@ class Database:
             c.execute('INSERT INTO bins VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,lat=excluded.lat,lon=excluded.lon,capacity_l=excluded.capacity_l',
                       (bin_id, name, lat, lon, capacity_l, source))
 
-    def ingest(self, msg, now=None):
+    def ingest(self, msg, now=None, *, notifications=True, notification_chat_id=None):
         now = time.time() if now is None else now
         payload = json.dumps(msg.model_dump(), separators=(',', ':'), sort_keys=True)
         with self.connect() as c:
@@ -99,11 +102,11 @@ class Database:
             s = c.execute('SELECT * FROM bin_state WHERE bin_id=?', (msg.bin_id,)).fetchone()
             if msg.kind == 'event':
                 c.execute('INSERT INTO events VALUES(?,?)', (row_id, msg.event_type))
-                label = 'MÔ PHỎNG' if msg.source == 'simulated' else 'THIẾT BỊ'
                 # A telemetry backstop may already have announced this full state.
-                if msg.event_type!='FULL' or not s or not s['full']:
+                if notifications and (msg.event_type!='FULL' or not s or not s['full']):
+                    historical = bool(s and (msg.boot_no, msg.seq) <= (s['boot_no'], s['seq']))
                     self.enqueue(c, f'event:{msg.bin_id}:{msg.boot_id}:{msg.seq}',
-                                 f'[{label}] Sự kiện {msg.event_type} tại {msg.bin_id}; giờ đo: {msg.sampled_at or "chưa đồng bộ"}. Có thể là lịch sử gửi bù; xem trạng thái mới nhất trên dashboard.', now)
+                                 format_notification(msg, b['name'], now, historical=historical), now, notification_chat_id)
             # boot_no is persisted monotonically on device. Never compare random UUIDs.
             newer = not s or (msg.boot_no, msg.seq) > (s['boot_no'], s['seq'])
             if newer:
@@ -118,8 +121,8 @@ class Database:
                 if low >= 3 or msg.event_type == 'CLEARED': full = 0
                 c.execute('INSERT INTO bin_state VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(bin_id) DO UPDATE SET telemetry_id=excluded.telemetry_id,boot_no=excluded.boot_no,seq=excluded.seq,last_seen=excluded.last_seen,full=excluded.full,high_count=excluded.high_count,low_count=excluded.low_count',
                           (msg.bin_id,row_id,msg.boot_no,msg.seq,now,full,high,low))
-                if full and not old_full and msg.kind != 'event':
-                    self.enqueue(c, f'threshold:{row_id}', f'[{msg.source}] {msg.bin_id}: mức đầy đo được ≥{msg.full_on_pct}% qua 3 bản tin hợp lệ; giờ đo {msg.sampled_at or "chưa đồng bộ"}. Có thể là dữ liệu gửi bù.', now)
+                if notifications and full and not old_full and msg.kind != 'event':
+                    self.enqueue(c, f'threshold:{row_id}', format_notification(msg, b['name'], now, threshold=True), now, notification_chat_id)
             return {'bin_id': msg.bin_id, 'boot_id': msg.boot_id, 'seq': msg.seq, 'stored': True, 'duplicate': False}
 
     @staticmethod
@@ -130,17 +133,33 @@ class Database:
         now = time.time() if now is None else now
         with self.connect() as c:
             rows = c.execute('SELECT b.*,s.last_seen,s.full,t.payload,t.measured_at,t.received_at FROM bins b LEFT JOIN bin_state s ON s.bin_id=b.id LEFT JOIN telemetry t ON t.id=s.telemetry_id ORDER BY b.id').fetchall()
+            networks = {}
+            for item in c.execute("SELECT value FROM kv WHERE key LIKE 'lab-session:%'"):
+                network = json.loads(item['value'])
+                if network.get('connection_last_seen') is not None:
+                    previous = networks.get(network['bin_id'])
+                    if not previous or network['boot_no'] > previous['boot_no']:
+                        networks[network['bin_id']] = network
             result = []
             for r in rows:
                 d = dict(r)
                 p = json.loads(d.pop('payload') or '{}')
-                d.update({k: p.get(k) for k in ('fill_pct','quality','lid_state','time_quality','boot_id','boot_no','seq','lid_open_count','queue_depth','dropped_records','reconnects','offline_ms','replay_delay_ms')})
+                d.update({k: p.get(k) for k in ('fill_pct','quality','lid_state','time_quality','boot_id','boot_no','seq','lid_open_count','queue_depth','dropped_records','reconnects','offline_ms','replay_delay_ms','fault_codes')})
                 d['full_on_pct']=p.get('full_on_pct',80);d['full_off_pct']=p.get('full_off_pct',75)
                 d['online'] = bool(d['last_seen'] and now - d['last_seen'] <= stale_seconds)
+                network = networks.get(d['id'])
+                if network:
+                    connected = (network.get('connection_monitoring') and not network.get('connection_retired') and
+                                 network.get('connection_state') == 'connected' and
+                                 now - network['connection_last_seen'] < OFFLINE_SECONDS)
+                    d['wifi_state'] = 'connected' if connected else 'closed' if network.get('connection_retired') else 'offline'
+                    d['wifi_last_seen'] = network['connection_last_seen']
+                    d['online'] = bool(connected)
                 # Unknown device time is not silently replaced by received_at.
                 d['age_seconds'] = max(0, now-d['measured_at']) if d['measured_at'] is not None else None
                 d['delivery_delay_seconds'] = max(0,d['received_at']-d['measured_at']) if d['measured_at'] is not None else None
-                d['stale'] = d['age_seconds'] is None or d['age_seconds'] > stale_seconds
+                d['stale'] = (d['age_seconds'] is None or d['age_seconds'] > stale_seconds or
+                              bool(network and p.get('boot_no') != network['boot_no']))
                 d['usable'] = d['online'] and not d['stale'] and d['quality'] == 'valid' and d['lid_state']!='FAULT'
                 prediction = c.execute('SELECT payload FROM predictions WHERE bin_id=?', (d['id'],)).fetchone()
                 d['prediction'] = json.loads(prediction[0]) if prediction else {'status': 'unavailable'}
