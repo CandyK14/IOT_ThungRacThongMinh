@@ -1,0 +1,313 @@
+{
+  "version": 1,
+  "author": "Smart Trash Bin - simulation only; real wiring: docs/PHAN_CUNG.md",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": -9.6,
+      "left": 4.84,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "ultrasonic_lid",
+      "top": -228.9,
+      "left": -215.3,
+      "attrs": {
+        "distance": "100"
+      }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "ultrasonic_fill",
+      "top": -180.9,
+      "left": 245.5,
+      "attrs": {
+        "distance": "30"
+      }
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "servo1",
+      "top": 131.6,
+      "left": -352.4,
+      "rotate": 180,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_red",
+      "top": 181.6,
+      "left": 145.4,
+      "rotate": 270,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_green",
+      "top": 126.4,
+      "left": 263.4,
+      "rotate": 180,
+      "attrs": {
+        "color": "green"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 147.95,
+      "left": 163.2,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 128.75,
+      "left": 163.2,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "echo1_top",
+      "top": -70,
+      "left": -160,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "echo1_bottom",
+      "top": -20,
+      "left": -160,
+      "rotate": 90,
+      "attrs": {
+        "value": "15000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "echo2_top",
+      "top": -70,
+      "left": 270,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "echo2_bottom",
+      "top": -20,
+      "left": 270,
+      "rotate": 90,
+      "attrs": {
+        "value": "15000"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:GND.1",
+      "ultrasonic_lid:GND",
+      "black",
+      [
+        "h-124.65",
+        "v-278.4"
+      ]
+    ],
+    [
+      "esp:5V",
+      "ultrasonic_lid:VCC",
+      "red",
+      [
+        "h-38.25",
+        "h-105.6"
+      ]
+    ],
+    [
+      "esp:5",
+      "ultrasonic_lid:TRIG",
+      "blue",
+      [
+        "h-268.8"
+      ]
+    ],
+    [
+      "esp:GND.1",
+      "ultrasonic_fill:GND",
+      "black",
+      [
+        "h144",
+        "h97.2"
+      ]
+    ],
+    [
+      "esp:5V",
+      "ultrasonic_fill:VCC",
+      "red",
+      [
+        "v-105.6",
+        "h307.35"
+      ]
+    ],
+    [
+      "esp:19",
+      "ultrasonic_fill:TRIG",
+      "blue",
+      [
+        "h57.6",
+        "h163.6"
+      ]
+    ],
+    [
+      "esp:GND.1",
+      "servo1:GND",
+      "black",
+      [
+        "h-268.8",
+        "v124.8"
+      ]
+    ],
+    [
+      "esp:5V",
+      "servo1:V+",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "esp:13",
+      "servo1:PWM",
+      "orange",
+      [
+        "h-124.65",
+        "v29"
+      ]
+    ],
+    [
+      "esp:2",
+      "r1:1",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "r1:2",
+      "led_red:A",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "led_red:C",
+      "esp:GND.1",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "esp:4",
+      "r2:1",
+      "green",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "r2:2",
+      "led_green:A",
+      "green",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "led_green:C",
+      "esp:GND.1",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "led_green:C",
+      "esp:GND.1",
+      "green",
+      [
+        "v-57.6",
+        "h-202"
+      ]
+    ],
+    [
+      "led_red:C",
+      "esp:GND.1",
+      "green",
+      [
+        "v36",
+        "h-211.2",
+        "v-103.6"
+      ]
+    ],
+    [
+      "ultrasonic_lid:ECHO",
+      "echo1_top:1",
+      "green",
+      []
+    ],
+    [
+      "echo1_top:2",
+      "esp:18",
+      "green",
+      []
+    ],
+    [
+      "echo1_top:2",
+      "echo1_bottom:1",
+      "green",
+      []
+    ],
+    [
+      "echo1_bottom:2",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "ultrasonic_fill:ECHO",
+      "echo2_top:1",
+      "green",
+      []
+    ],
+    [
+      "echo2_top:2",
+      "esp:21",
+      "green",
+      []
+    ],
+    [
+      "echo2_top:2",
+      "echo2_bottom:1",
+      "green",
+      []
+    ],
+    [
+      "echo2_bottom:2",
+      "esp:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {}
+}
