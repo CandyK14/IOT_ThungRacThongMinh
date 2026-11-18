@@ -39,6 +39,12 @@ Chọn thùng để xem lịch sử/sự kiện, lọc nguồn/trạng thái, b�
 
 Biến môi trường tham khảo: [.env.example](.env.example). Ứng dụng **không tự nạp `.env`**; đặt `$env:TEN_BIEN=...` trong PowerShell. Mặc định MQTT tắt, Telegram dry-run, không có tài khoản/mật khẩu mặc định. `BIN_DB` chọn CSDL khác; mọi lệnh phải dùng cùng biến này. Giao diện chỉ cho host loopback; cấu hình hiện tại phục vụ demo trên laptop. Muốn mở qua điện thoại/LAN cần cấu hình host allowlist, HTTPS/reverse proxy và `COOKIE_SECURE=1` có chủ đích; chưa có profile triển khai công khai.
 
+### Mô phỏng tương tác ngay trên web
+
+Dashboard có **Phòng thử nghiệm tương tác** với thùng rác mặt cắt, hoạt ảnh mở nắp, tay tiếp cận, rác và LED. Bấm **Chạy chu kỳ tự động** hoặc thử Đưa tay/Bỏ rác/Thu gom. Mở **Thử lỗi & kết nối dashboard** để thử lỗi cảm biến và lưu vào thùng lab nguồn simulated riêng. Thông báo của lab mặc định chỉ xem trước; cấu hình bot và bật gửi riêng cho phiên để nhận Telegram theo [hướng dẫn](docs/HUONG_DAN_TELEGRAM_WEB.md).
+
+Nếu backend đang chạy từ trước khi nâng cấp, dừng bằng Ctrl+C rồi chạy lại lệnh uvicorn ở trên; tải lại trang bằng Ctrl+F5. Tài khoản hiện có vẫn dùng được. Xem [hướng dẫn frontend mô phỏng](docs/FRONTEND_MO_PHONG.md) để biết ngưỡng, đồng bộ và giới hạn mô hình.
+
 ## 2. Huấn luyện, đánh giá và suy luận AI
 
 ```powershell
@@ -123,14 +129,17 @@ Telegram mặc định **dry-run**, các công việc được đánh dấu `dry
 
 ## 5. Kiểm thử và tài liệu bàn giao
 
+`pytest.ini` giới hạn thu thập test trong `tests/`, bỏ qua các bản sao/log trong `artifacts/` và dùng cache `artifacts/pytest-cache`. Mỗi lần chạy tạo thư mục tạm riêng dưới `artifacts/pytest-tmp/` để tránh lỗi quyền từ Temp Windows cũ; không cần xóa cache hoặc bản sao project để chạy test. Các thư mục này đã được gitignore.
+
 ```powershell
 .venv\Scripts\python.exe -m pytest -q --junitxml=artifacts/tests.xml
 .venv\Scripts\python.exe -m tools.smoke_demo
 node --check dashboard/app.js
 ```
 
-Node chỉ dùng kiểm tra cú pháp khi phát triển, không cần để chạy dashboard. C++ test dùng Zig cài trong `.venv`, lần compile đầu có thể mất hơn một phút; không cần ESP32. Test MQTT mở socket loopback TLS trên port ngẫu nhiên; không gửi mạng ngoài. Tất cả test dùng DB/thư mục/credential tạm; Telegram dùng mock/dry-run.
+Node18+ dùng cho kiểm tra frontend và cú pháp khi phát triển; không cần Node để chạy dashboard. C++ test dùng Zig cài trong `.venv`, lần compile đầu có thể mất hơn một phút; không cần ESP32. Test MQTT mở socket loopback TLS trên port ngẫu nhiên; không gửi mạng ngoài. Tất cả test dùng DB/thư mục/credential tạm; Telegram dùng mock/dry-run.
 
+- [Thử mở nắp và báo đầy trên Wokwi](docs/HUONG_DAN_TEST_WOKWI.md).
 - [Kết quả kiểm thử thực sự đã chạy](docs/KET_QUA_KIEM_THU.md).
 - [Kiến trúc, schema, ordering và API](docs/KIEN_TRUC_GIAO_THUC.md).
 - [Phần cứng, BOM, hiệu chuẩn và nghiệm thu thiết bị](docs/PHAN_CUNG.md).
@@ -141,3 +150,9 @@ Node chỉ dùng kiểm tra cú pháp khi phát triển, không cần để ch�
 - [Trước/sau và hướng mở rộng](docs/TRUOC_SAU_VA_MO_RONG.md).
 
 Sửa lỗi thường gặp: `401` → đăng nhập/tạo tài khoản; `403` → cần quản lý hoặc sai Origin; `409` → trùng ID/boot hoặc đang giải tuyến; MQTT không kết nối → kiểm tra giờ, CA/SAN, credentials, listener; `unavailable` → thiếu lịch sử 30 phút, số đo lỗi/cũ hoặc chưa biết giờ. Nếu model train lại, khởi động lại backend. Không xóa CSDL, NVS hoặc CA để chữa lỗi một cách tùy tiện.
+
+Nhận cảnh báo từ thùng tương tác trên web: [Hướng dẫn Telegram](docs/HUONG_DAN_TELEGRAM_WEB.md). Mặc định xem trước; cần cấu hình bot và bật gửi riêng cho phiên.
+
+Màn LED mức đầy trên thân thùng mô phỏng và tin Telegram có trạng thái cảm biến: [Cách thử và quy tắc](docs/LED_VA_THONG_BAO_THIET_BI.md).
+
+Wi-Fi giả lập, ngắt/kết nối lại và tin Telegram Wi-Fi riêng: [Hướng dẫn thử](docs/WIFI_MO_PHONG.md).

@@ -184,7 +184,7 @@ def update_predictions(db,predictor,settings):
         pred=current_prediction(db,predictor,settings,b,now)
         with db.connect() as c:
             c.execute('INSERT INTO predictions VALUES(?,?,?) ON CONFLICT(bin_id) DO UPDATE SET created_at=excluded.created_at,payload=excluded.payload',(b['id'],now,json.dumps(pred)))
-            if b['usable'] and b['fill_pct']<b['full_on_pct'] and pred.get('fill_pct',0)>=b['full_on_pct'] and pred.get('status')=='available' and pred.get('anomaly') is not True:
+            if not b['id'].startswith('lab-') and b['usable'] and b['fill_pct']<b['full_on_pct'] and pred.get('fill_pct',0)>=b['full_on_pct'] and pred.get('status')=='available' and pred.get('anomaly') is not True:
                 previous=c.execute('SELECT value FROM kv WHERE key=?',('early:'+b['id'],)).fetchone()
                 if not previous or now-float(previous[0])>=3600:
                     db.enqueue(c,f'early:{b["id"]}:{int(now//3600)}',f'[{b["source"]}] DỰ ĐOÁN {b["id"]}: {pred["fill_pct"]}% sau {pred["horizon_seconds"]//60} phút; phương pháp {pred["method"]}.',now)

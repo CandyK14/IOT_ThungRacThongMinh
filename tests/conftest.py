@@ -1,4 +1,6 @@
 import time
+from pathlib import Path
+import uuid
 from datetime import datetime,timezone
 
 import pytest
@@ -6,6 +8,21 @@ import pytest
 from backend.config import Settings
 from backend.db import Database
 from backend.schema import Message
+
+
+def pytest_configure(config):
+    """Keep test temp data local and separate from old Windows/user caches."""
+    if config.option.basetemp is not None:
+        return
+    project = Path(__file__).resolve().parents[1]
+    temp_parent = (project / 'artifacts' / 'pytest-tmp').resolve()
+    if not temp_parent.is_relative_to(project):
+        raise pytest.UsageError('Test temporary directory must stay inside the project')
+    temp_parent.mkdir(parents=True, exist_ok=True)
+    run_path = temp_parent / ('run-' + uuid.uuid4().hex)
+    if run_path.exists():
+        raise pytest.UsageError('Refusing to reuse an existing test temporary directory')
+    config.option.basetemp = str(run_path)
 
 
 @pytest.fixture

@@ -25,6 +25,7 @@ class Message(BaseModel):
     quality: Literal['valid', 'warming', 'stale', 'fault', 'lid_open']
     lid_state: Literal['CLOSED', 'OPENING', 'OPEN', 'CLOSING', 'FAULT']
     lid_open_count: int = Field(ge=0, le=4294967295)
+    fault_codes: list[Literal['HAND_SENSOR', 'FILL_SENSOR', 'LID_CONTROL', 'STORAGE', 'POWER']] | None = Field(default=None, max_length=5)
     battery_mv: int | None = Field(default=None, ge=0, le=60000)
     queue_depth: int = Field(default=0, ge=0, le=128)
     dropped_records: int = Field(default=0, ge=0)
@@ -50,6 +51,10 @@ class Message(BaseModel):
             raise ValueError('Thiết bị thật không được dùng giờ giả lập')
         if self.event_type in ('FULL', 'CLEARED') and self.quality != 'valid':
             raise ValueError('FULL/CLEARED cần số đo hợp lệ')
+        if self.fault_codes is not None and len(self.fault_codes) != len(set(self.fault_codes)):
+            raise ValueError('Mã lỗi không được trùng')
+        if self.fault_codes and 'FILL_SENSOR' in self.fault_codes and self.quality == 'valid':
+            raise ValueError('Cảm biến mức rác lỗi không được báo số đo valid')
         if self.full_off_pct>=self.full_on_pct:
             raise ValueError('Ngưỡng xóa phải nhỏ hơn ngưỡng đầy')
         if self.event_type=='FULL' and self.fill_pct<self.full_on_pct:

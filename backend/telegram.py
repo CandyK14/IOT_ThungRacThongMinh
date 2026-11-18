@@ -22,19 +22,32 @@ class TelegramWorker:
     def __init__(self,db,settings,transport=None):
         self.db=db;self.settings=settings
         self.poll_after=0
+        self.last_error=None;self.last_http_status=None
         self.http=httpx.Client(timeout=httpx.Timeout(10,connect=4),transport=transport,follow_redirects=False)
 
     def close(self): self.http.close()
 
     def request(self,method,body):
+        # Only retain safe categories/status, never a credential-bearing exception or URL.
+        self.last_error=None;self.last_http_status=None
         try:
             response=self.http.post(f'https://api.telegram.org/bot{self.settings.telegram_token}/{method}',json=body)
+            self.last_http_status=response.status_code
             data=response.json()
+            if not isinstance(data,dict):raise ValueError('Invalid response shape')
             if response.status_code==200 and data.get('ok') is True:return True,data,0
+            self.last_error='api'
             delay=max(1,min(86400,int(data.get('parameters',{}).get('retry_after',30))))
             return False,{},delay
-        except (httpx.HTTPError,ValueError,TypeError,AttributeError):
-            return False,{},30
+        except httpx.TimeoutException:
+            self.last_error='timeout'
+        except httpx.ConnectError:
+            self.last_error='connection'
+        except httpx.HTTPError:
+            self.last_error='network'
+        except (ValueError,TypeError,AttributeError):
+            self.last_error='invalid_response'
+        return False,{},30
 
     def deliver(self,now=None,stop=None):
         now=time.time() if now is None else now

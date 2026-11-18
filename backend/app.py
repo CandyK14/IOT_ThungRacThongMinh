@@ -7,6 +7,7 @@ from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from pathlib import Path
 from urllib.parse import urlsplit
+from typing import Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse, JSONResponse
@@ -22,7 +23,8 @@ from .ml import Predictor, update_predictions
 from .mqtt import Ingestor
 from .routing import RouteRequest, solve
 from .runtime import SingleWorker
-from .schema import parse_message
+from .schema import Message, parse_message
+from .lab import LabService
 from .telegram import TelegramWorker
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -31,6 +33,18 @@ ROOT=Path(__file__).resolve().parent.parent
 class LoginBody(BaseModel):
     username:str=Field(min_length=1,max_length=64)
     password:str=Field(min_length=1,max_length=256)
+
+
+class LabNotifications(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    enabled:bool=Field(strict=True)
+    after_seq:int=Field(strict=True,ge=0,le=4294967295)
+
+
+class LabConnection(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    seq:int=Field(strict=True,ge=1,le=9007199254740991)
+    action:Literal['heartbeat','stop']='heartbeat'
 
 
 class BinBody(BaseModel):
@@ -46,13 +60,14 @@ class BinBody(BaseModel):
 def create_app(settings=None,background=True):
     cfg=settings or Settings();cfg.validate();db=Database(cfg.db)
     stop=threading.Event();worker_lock=SingleWorker(cfg.db);ingestor=None
+    lab=LabService(db,cfg)
     login_attempts=defaultdict(deque);route_times=defaultdict(float);route_mutex=threading.Lock()
-    health={'worker':'stopped','mqtt':'disabled','prediction_error':False}
+    health={'connection_monitor':'stopped','worker':'stopped','mqtt':'disabled','prediction_error':False}
 
     @asynccontextmanager
     async def lifespan(app):
         nonlocal ingestor
-        worker_lock.acquire();stop.clear();thread=None
+        worker_lock.acquire();stop.clear();thread=None;network_thread=None
         telegram=TelegramWorker(db,cfg)
         if cfg.mqtt_enabled:
             ingestor=Ingestor(db,cfg);ingestor.start()
@@ -72,22 +87,34 @@ def create_app(settings=None,background=True):
                     health['worker']='degraded'
                     logging.getLogger(__name__).warning('Worker lỗi; không log credential hoặc payload')
                 stop.wait(1)
+        def monitor():
+            while not stop.is_set():
+                try:
+                    lab.check_connections();health['connection_monitor']='running'
+                except Exception:
+                    health['connection_monitor']='degraded'
+                    logging.getLogger(__name__).warning('Giám sát kết nối lab gặp lỗi; không log payload')
+                stop.wait(1)
         try:
-            if background:thread=threading.Thread(target=work,daemon=True);thread.start()
+            lab.reset_connection_monitors()
+            if background:
+                network_thread=threading.Thread(target=monitor,daemon=True);network_thread.start()
+                thread=threading.Thread(target=work,daemon=True);thread.start()
             yield
         finally:
             stop.set()
             if thread:thread.join(timeout=35)
+            if network_thread:network_thread.join(timeout=11)
             if ingestor:ingestor.stop()
-            if thread and thread.is_alive():
+            if (thread and thread.is_alive()) or (network_thread and network_thread.is_alive()):
                 # Keep ownership until process termination if a transport is still blocked.
                 # Do not race a second worker or close a client in active use.
                 health['worker']='stopping'
             else:
-                telegram.close();worker_lock.release();health['worker']='stopped'
+                telegram.close();worker_lock.release();health['worker']='stopped';health['connection_monitor']='stopped'
 
     app=FastAPI(title='Thùng rác thông minh',lifespan=lifespan,docs_url=None,redoc_url=None,openapi_url=None)
-    app.state.db=db;app.state.settings=cfg
+    app.state.db=db;app.state.settings=cfg;app.state.lab=lab
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=['localhost','127.0.0.1','[::1]','testserver'])
 
     @app.exception_handler(RequestValidationError)
@@ -138,6 +165,7 @@ def create_app(settings=None,background=True):
 
     @app.post('/api/logout')
     def signout(request:Request,response:Response,u=Depends(viewer)):
+        lab.close_owner(u['username'])
         with db.connect() as c:c.execute('DELETE FROM sessions WHERE token_hash=?',(hashlib.sha256(request.cookies['session'].encode()).hexdigest(),))
         response.delete_cookie('session');return {'ok':True}
 
@@ -173,8 +201,43 @@ def create_app(settings=None,background=True):
         try:
             m=parse_message(await request.body(),cfg.max_payload)
             if m.source!='simulated':raise ValueError('Endpoint demo chỉ nhận nguồn simulated; thiết bị thật dùng MQTT TLS')
+            if m.bin_id.startswith('lab-'):raise ValueError('Thùng lab phải dùng API phiên riêng')
             return db.ingest(m)
         except (ValueError,TypeError) as e:raise HTTPException(422,'Bản tin không hợp lệ hoặc thùng chưa đăng ký') from None
+
+    @app.post('/api/lab/sessions')
+    def lab_start(u=Depends(manager)):
+        try:
+            return lab.start(u['username'])
+        except ValueError as e:
+            raise HTTPException(409, str(e)) from None
+
+    @app.post('/api/lab/sessions/{session_id}/messages')
+    def lab_message(session_id: str, body: Message, u=Depends(manager)):
+        try:
+            return lab.ingest(u['username'], session_id, body)
+        except PermissionError as e:
+            raise HTTPException(403, str(e)) from None
+        except ValueError as e:
+            raise HTTPException(422, str(e)) from None
+
+    @app.post('/api/lab/sessions/{session_id}/notifications')
+    def lab_notifications(session_id: str, body: LabNotifications, u=Depends(manager)):
+        try:
+            return lab.set_notifications(u['username'], session_id, body.enabled, body.after_seq)
+        except PermissionError as e:
+            raise HTTPException(403, str(e)) from None
+        except ValueError as e:
+            raise HTTPException(409, str(e)) from None
+
+    @app.post('/api/lab/sessions/{session_id}/connection')
+    def lab_connection(session_id: str, body: LabConnection, u=Depends(manager)):
+        try:
+            return lab.connection(u['username'], session_id, body.seq, body.action)
+        except PermissionError as e:
+            raise HTTPException(403, str(e)) from None
+        except ValueError as e:
+            raise HTTPException(409, str(e)) from None
 
     @app.post('/api/routes')
     def route(body:RouteRequest,u=Depends(manager)):

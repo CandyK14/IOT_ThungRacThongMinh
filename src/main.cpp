@@ -79,6 +79,10 @@ void emit(Event e,float fill,float d,Quality q,const LidController &lid) {
   r.fill=fill;r.distance=d;r.quality=q;r.event=e;r.lid=lid.state;r.openCount=lid.openCount;
   r.fullOn=FULL_ON_PERCENT;r.fullOff=FULL_OFF_PERCENT;
   xSemaphoreTake(statsMutex,portMAX_DELAY);r.dropped=stats.dropped;r.reconnects=stats.reconnects;r.offlineMs=stats.offlineMs;r.depth=stats.depth;xSemaphoreGive(statsMutex);
+  if(e!=Event::NONE) {
+    if(q==Quality::VALID)Serial.printf("[Su kien cuc bo] %s | fill=%.1f%% | sensor=%s\n",eventName(e),fill,qualityName(q));
+    else Serial.printf("[Su kien cuc bo] %s | fill=unknown | sensor=%s\n",eventName(e),qualityName(q));
+  }
   if(xQueueSend(samples,&r,0)!=pdTRUE){xSemaphoreTake(statsMutex,portMAX_DELAY);++stats.dropped;xSemaphoreGive(statsMutex);}
 }
 void controlTask(void*) {
@@ -117,6 +121,7 @@ void controlTask(void*) {
       slot=(slot+1)%5;
     }
     ProtectionInput p=protectionInput();lid.tick(now,hand,handValid,handFailures>=3,p);
+    if(previous!=lid.state)Serial.printf("[Nap] %s -> %s\n",lidName(previous),lidName(lid.state));
     if(previous!=lid.state && FILL_SENSOR_ON_LID){fills.clear();q=Quality::LID_OPEN;threshold.invalid();}
     previous=lid.state;servo.write(constrain(lid.angle,0,90));
 #if SERVO_PROTECTION_ENABLED
@@ -163,6 +168,7 @@ size_t serialize(const Record &r,char *buffer,size_t size) {
   return serializeJson(j,buffer,size);
 }
 void networkTask(void*) {
+  if(brokerCA.length()==0)Serial.println("[Mang] Chua cau hinh CA MQTT: thu nap/LED/Serial cuc bo; chua gui backend/Telegram.");
   bool nvs=prefs.begin("binqueue",false);if(nvs)restore();else{xSemaphoreTake(statsMutex,portMAX_DELAY);stats.storageFault=true;xSemaphoreGive(statsMutex);}
   uint32_t lastWifi=millis()-10000,lastReconnect=0,lastPublish=millis()-1000,lastLog=0,backoff=1000,offlineAt=millis();
   bool wasConnected=false,started=false;uint32_t sendBackoff=1000;
