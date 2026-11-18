@@ -1,0 +1,38 @@
+{
+  "verified_at": "2026-11-17T22:35:57.469774+07:00",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]",
+  "tests": {
+    "tests": 42,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ram_static_bytes": 62652,
+  "ram_total_bytes": 327680,
+  "program_flash_bytes": 935009,
+  "program_partition_bytes": 1310720,
+  "firmware_bin_sha256": "b46984f1e4e75b6ea60d5bbd6120e797b25b2d20b8fc2b554b2c82aec57db5c3",
+  "versions": {
+    "fastapi": "0.163.1",
+    "uvicorn": "0.54.0",
+    "pydantic": "2.14.3",
+    "numpy": "2.5.5",
+    "scikit-learn": "1.9.1",
+    "ortools": "9.15.6755",
+    "paho-mqtt": "2.2.0",
+    "httpx": "0.28.1",
+    "pytest": "9.2.0",
+    "amqtt": "0.12.2",
+    "ziglang": "0.17.1"
+  },
+  "not_verified": [
+    "ESP32 runtime",
+    "Wokwi runtime",
+    "Mosquitto runtime",
+    "browser visual/responsive",
+    "real Telegram",
+    "real-world AI",
+    "electrical/mechanical/energy/24h"
+  ]
+}

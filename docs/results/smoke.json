@@ -1,0 +1,2794 @@
+{
+  "message_count": 852,
+  "max_normalized_json_bytes": 462,
+  "bins": 30,
+  "prediction_available": 28,
+  "demo_route": {
+    "status": "solved",
+    "solver": "OR-Tools CVRP; nghiệm tốt nhất tìm được trong giới hạn, không chứng minh tối ưu toàn cục",
+    "distance_source": "Haversine, đường thẳng địa lý mô phỏng; không phải đường xe chạy",
+    "capacity_assumption": "lít ước lượng = dung tích thùng × % chiều cao; giả định tiết diện đều và rác phân bố đều; không phải kg",
+    "depot": [
+      10.77,
+      106.66
+    ],
+    "points": [
+      {
+        "id": "sim-004",
+        "lat": 10.77,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 102
+      },
+      {
+        "id": "sim-010",
+        "lat": 10.77,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 101
+      },
+      {
+        "id": "sim-013",
+        "lat": 10.779,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 112
+      },
+      {
+        "id": "sim-015",
+        "lat": 10.779,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 98
+      },
+      {
+        "id": "sim-019",
+        "lat": 10.779,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 101
+      },
+      {
+        "id": "sim-020",
+        "lat": 10.779,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 99
+      }
+    ],
+    "routes": [
+      {
+        "vehicle": 1,
+        "nodes": [
+          0,
+          0
+        ],
+        "load_l": 0,
+        "distance_m": 0,
+        "stops": [
+          "depot",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 2,
+        "nodes": [
+          0,
+          0
+        ],
+        "load_l": 0,
+        "distance_m": 0,
+        "stops": [
+          "depot",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 3,
+        "nodes": [
+          0,
+          1,
+          2,
+          6,
+          5,
+          4,
+          3,
+          0
+        ],
+        "load_l": 613,
+        "distance_m": 16997,
+        "stops": [
+          "depot",
+          "sim-004",
+          "sim-010",
+          "sim-020",
+          "sim-019",
+          "sim-015",
+          "sim-013",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.77,
+            106.684
+          ],
+          [
+            10.77,
+            106.732
+          ],
+          [
+            10.779,
+            106.732
+          ],
+          [
+            10.779,
+            106.72399999999999
+          ],
+          [
+            10.779,
+            106.692
+          ],
+          [
+            10.779,
+            106.676
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      }
+    ],
+    "total_distance_m": 16997,
+    "unserved": [],
+    "manual_review": [
+      {
+        "id": "sim-011",
+        "reason": "Offline/cũ/lỗi/chưa biết mức đầy: cần kiểm tra",
+        "source": "simulated"
+      },
+      {
+        "id": "sim-028",
+        "reason": "Offline/cũ/lỗi/chưa biết mức đầy: cần kiểm tra",
+        "source": "simulated"
+      }
+    ],
+    "elapsed_seconds": 2.012,
+    "baseline": {
+      "method": "nearest_neighbor_capacity",
+      "routes": [
+        {
+          "vehicle": 1,
+          "nodes": [
+            0,
+            3,
+            1,
+            4,
+            5,
+            6,
+            2,
+            0
+          ],
+          "load_l": 613,
+          "distance_m": 17907,
+          "stops": [
+            "depot",
+            "sim-013",
+            "sim-004",
+            "sim-015",
+            "sim-019",
+            "sim-020",
+            "sim-010",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.779,
+              106.676
+            ],
+            [
+              10.77,
+              106.684
+            ],
+            [
+              10.779,
+              106.692
+            ],
+            [
+              10.779,
+              106.72399999999999
+            ],
+            [
+              10.779,
+              106.732
+            ],
+            [
+              10.77,
+              106.732
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 2,
+          "nodes": [
+            0,
+            0
+          ],
+          "load_l": 0,
+          "distance_m": 0,
+          "stops": [
+            "depot",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 3,
+          "nodes": [
+            0,
+            0
+          ],
+          "load_l": 0,
+          "distance_m": 0,
+          "stops": [
+            "depot",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        }
+      ],
+      "distance_m": 17907,
+      "unserved": []
+    },
+    "comparison": {
+      "same_served_set": true,
+      "distance_reduction_pct": 5.08
+    }
+  },
+  "scale_100_route": {
+    "status": "solved",
+    "solver": "OR-Tools CVRP; nghiệm tốt nhất tìm được trong giới hạn, không chứng minh tối ưu toàn cục",
+    "distance_source": "Haversine, đường thẳng địa lý mô phỏng; không phải đường xe chạy",
+    "capacity_assumption": "lít ước lượng = dung tích thùng × % chiều cao; giả định tiết diện đều và rác phân bố đều; không phải kg",
+    "depot": [
+      10.77,
+      106.66
+    ],
+    "points": [
+      {
+        "id": "scale-000",
+        "lat": 10.77,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-001",
+        "lat": 10.77,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-002",
+        "lat": 10.77,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-003",
+        "lat": 10.77,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-004",
+        "lat": 10.77,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-005",
+        "lat": 10.77,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-006",
+        "lat": 10.77,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-007",
+        "lat": 10.77,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-008",
+        "lat": 10.77,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-009",
+        "lat": 10.77,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-010",
+        "lat": 10.779,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-011",
+        "lat": 10.779,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-012",
+        "lat": 10.779,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-013",
+        "lat": 10.779,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-014",
+        "lat": 10.779,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-015",
+        "lat": 10.779,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-016",
+        "lat": 10.779,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-017",
+        "lat": 10.779,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-018",
+        "lat": 10.779,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-019",
+        "lat": 10.779,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-020",
+        "lat": 10.788,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-021",
+        "lat": 10.788,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-022",
+        "lat": 10.788,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-023",
+        "lat": 10.788,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-024",
+        "lat": 10.788,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-025",
+        "lat": 10.788,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-026",
+        "lat": 10.788,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-027",
+        "lat": 10.788,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-028",
+        "lat": 10.788,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-029",
+        "lat": 10.788,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-030",
+        "lat": 10.796999999999999,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-031",
+        "lat": 10.796999999999999,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-032",
+        "lat": 10.796999999999999,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-033",
+        "lat": 10.796999999999999,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-034",
+        "lat": 10.796999999999999,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-035",
+        "lat": 10.796999999999999,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-036",
+        "lat": 10.796999999999999,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-037",
+        "lat": 10.796999999999999,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-038",
+        "lat": 10.796999999999999,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-039",
+        "lat": 10.796999999999999,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-040",
+        "lat": 10.806,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-041",
+        "lat": 10.806,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-042",
+        "lat": 10.806,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-043",
+        "lat": 10.806,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-044",
+        "lat": 10.806,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-045",
+        "lat": 10.806,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-046",
+        "lat": 10.806,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-047",
+        "lat": 10.806,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-048",
+        "lat": 10.806,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-049",
+        "lat": 10.806,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-050",
+        "lat": 10.815,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-051",
+        "lat": 10.815,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-052",
+        "lat": 10.815,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-053",
+        "lat": 10.815,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-054",
+        "lat": 10.815,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-055",
+        "lat": 10.815,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-056",
+        "lat": 10.815,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-057",
+        "lat": 10.815,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-058",
+        "lat": 10.815,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-059",
+        "lat": 10.815,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-060",
+        "lat": 10.824,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-061",
+        "lat": 10.824,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-062",
+        "lat": 10.824,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-063",
+        "lat": 10.824,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-064",
+        "lat": 10.824,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-065",
+        "lat": 10.824,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-066",
+        "lat": 10.824,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-067",
+        "lat": 10.824,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-068",
+        "lat": 10.824,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-069",
+        "lat": 10.824,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-070",
+        "lat": 10.833,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-071",
+        "lat": 10.833,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-072",
+        "lat": 10.833,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-073",
+        "lat": 10.833,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-074",
+        "lat": 10.833,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-075",
+        "lat": 10.833,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-076",
+        "lat": 10.833,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-077",
+        "lat": 10.833,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-078",
+        "lat": 10.833,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-079",
+        "lat": 10.833,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-080",
+        "lat": 10.841999999999999,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-081",
+        "lat": 10.841999999999999,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-082",
+        "lat": 10.841999999999999,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-083",
+        "lat": 10.841999999999999,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-084",
+        "lat": 10.841999999999999,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-085",
+        "lat": 10.841999999999999,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-086",
+        "lat": 10.841999999999999,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-087",
+        "lat": 10.841999999999999,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-088",
+        "lat": 10.841999999999999,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-089",
+        "lat": 10.841999999999999,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-090",
+        "lat": 10.850999999999999,
+        "lon": 106.66,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-091",
+        "lat": 10.850999999999999,
+        "lon": 106.66799999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-092",
+        "lat": 10.850999999999999,
+        "lon": 106.676,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-093",
+        "lat": 10.850999999999999,
+        "lon": 106.684,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-094",
+        "lat": 10.850999999999999,
+        "lon": 106.692,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-095",
+        "lat": 10.850999999999999,
+        "lon": 106.7,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-096",
+        "lat": 10.850999999999999,
+        "lon": 106.708,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-097",
+        "lat": 10.850999999999999,
+        "lon": 106.716,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-098",
+        "lat": 10.850999999999999,
+        "lon": 106.72399999999999,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      },
+      {
+        "id": "scale-099",
+        "lat": 10.850999999999999,
+        "lon": 106.732,
+        "source": "simulated",
+        "reason": "Mức đo hiện tại",
+        "demand_l": 108
+      }
+    ],
+    "routes": [
+      {
+        "vehicle": 1,
+        "nodes": [
+          0,
+          0
+        ],
+        "load_l": 0,
+        "distance_m": 0,
+        "stops": [
+          "depot",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 2,
+        "nodes": [
+          0,
+          0
+        ],
+        "load_l": 0,
+        "distance_m": 0,
+        "stops": [
+          "depot",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 3,
+        "nodes": [
+          0,
+          51,
+          61,
+          71,
+          81,
+          91,
+          92,
+          93,
+          94,
+          95,
+          84,
+          83,
+          82,
+          72,
+          0
+        ],
+        "load_l": 1404,
+        "distance_m": 23641,
+        "stops": [
+          "depot",
+          "scale-050",
+          "scale-060",
+          "scale-070",
+          "scale-080",
+          "scale-090",
+          "scale-091",
+          "scale-092",
+          "scale-093",
+          "scale-094",
+          "scale-083",
+          "scale-082",
+          "scale-081",
+          "scale-071",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.815,
+            106.66
+          ],
+          [
+            10.824,
+            106.66
+          ],
+          [
+            10.833,
+            106.66
+          ],
+          [
+            10.841999999999999,
+            106.66
+          ],
+          [
+            10.850999999999999,
+            106.66
+          ],
+          [
+            10.850999999999999,
+            106.66799999999999
+          ],
+          [
+            10.850999999999999,
+            106.676
+          ],
+          [
+            10.850999999999999,
+            106.684
+          ],
+          [
+            10.850999999999999,
+            106.692
+          ],
+          [
+            10.841999999999999,
+            106.684
+          ],
+          [
+            10.841999999999999,
+            106.676
+          ],
+          [
+            10.841999999999999,
+            106.66799999999999
+          ],
+          [
+            10.833,
+            106.66799999999999
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 4,
+        "nodes": [
+          0,
+          52,
+          62,
+          73,
+          74,
+          85,
+          96,
+          97,
+          98,
+          99,
+          100,
+          90,
+          89,
+          88,
+          0
+        ],
+        "load_l": 1404,
+        "distance_m": 27258,
+        "stops": [
+          "depot",
+          "scale-051",
+          "scale-061",
+          "scale-072",
+          "scale-073",
+          "scale-084",
+          "scale-095",
+          "scale-096",
+          "scale-097",
+          "scale-098",
+          "scale-099",
+          "scale-089",
+          "scale-088",
+          "scale-087",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.815,
+            106.66799999999999
+          ],
+          [
+            10.824,
+            106.66799999999999
+          ],
+          [
+            10.833,
+            106.676
+          ],
+          [
+            10.833,
+            106.684
+          ],
+          [
+            10.841999999999999,
+            106.692
+          ],
+          [
+            10.850999999999999,
+            106.7
+          ],
+          [
+            10.850999999999999,
+            106.708
+          ],
+          [
+            10.850999999999999,
+            106.716
+          ],
+          [
+            10.850999999999999,
+            106.72399999999999
+          ],
+          [
+            10.850999999999999,
+            106.732
+          ],
+          [
+            10.841999999999999,
+            106.732
+          ],
+          [
+            10.841999999999999,
+            106.72399999999999
+          ],
+          [
+            10.841999999999999,
+            106.716
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 5,
+        "nodes": [
+          0,
+          41,
+          42,
+          53,
+          63,
+          64,
+          75,
+          86,
+          87,
+          76,
+          66,
+          65,
+          54,
+          43,
+          0
+        ],
+        "load_l": 1404,
+        "distance_m": 21840,
+        "stops": [
+          "depot",
+          "scale-040",
+          "scale-041",
+          "scale-052",
+          "scale-062",
+          "scale-063",
+          "scale-074",
+          "scale-085",
+          "scale-086",
+          "scale-075",
+          "scale-065",
+          "scale-064",
+          "scale-053",
+          "scale-042",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.806,
+            106.66
+          ],
+          [
+            10.806,
+            106.66799999999999
+          ],
+          [
+            10.815,
+            106.676
+          ],
+          [
+            10.824,
+            106.676
+          ],
+          [
+            10.824,
+            106.684
+          ],
+          [
+            10.833,
+            106.692
+          ],
+          [
+            10.841999999999999,
+            106.7
+          ],
+          [
+            10.841999999999999,
+            106.708
+          ],
+          [
+            10.833,
+            106.7
+          ],
+          [
+            10.824,
+            106.7
+          ],
+          [
+            10.824,
+            106.692
+          ],
+          [
+            10.815,
+            106.684
+          ],
+          [
+            10.806,
+            106.676
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 6,
+        "nodes": [
+          0,
+          46,
+          57,
+          58,
+          68,
+          69,
+          80,
+          79,
+          78,
+          77,
+          67,
+          56,
+          55,
+          44,
+          0
+        ],
+        "load_l": 1404,
+        "distance_m": 23272,
+        "stops": [
+          "depot",
+          "scale-045",
+          "scale-056",
+          "scale-057",
+          "scale-067",
+          "scale-068",
+          "scale-079",
+          "scale-078",
+          "scale-077",
+          "scale-076",
+          "scale-066",
+          "scale-055",
+          "scale-054",
+          "scale-043",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.806,
+            106.7
+          ],
+          [
+            10.815,
+            106.708
+          ],
+          [
+            10.815,
+            106.716
+          ],
+          [
+            10.824,
+            106.716
+          ],
+          [
+            10.824,
+            106.72399999999999
+          ],
+          [
+            10.833,
+            106.732
+          ],
+          [
+            10.833,
+            106.72399999999999
+          ],
+          [
+            10.833,
+            106.716
+          ],
+          [
+            10.833,
+            106.708
+          ],
+          [
+            10.824,
+            106.708
+          ],
+          [
+            10.815,
+            106.7
+          ],
+          [
+            10.815,
+            106.692
+          ],
+          [
+            10.806,
+            106.684
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 7,
+        "nodes": [
+          0,
+          11,
+          21,
+          31,
+          32,
+          33,
+          34,
+          45,
+          36,
+          35,
+          23,
+          22,
+          0
+        ],
+        "load_l": 1188,
+        "distance_m": 14229,
+        "stops": [
+          "depot",
+          "scale-010",
+          "scale-020",
+          "scale-030",
+          "scale-031",
+          "scale-032",
+          "scale-033",
+          "scale-044",
+          "scale-035",
+          "scale-034",
+          "scale-022",
+          "scale-021",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.779,
+            106.66
+          ],
+          [
+            10.788,
+            106.66
+          ],
+          [
+            10.796999999999999,
+            106.66
+          ],
+          [
+            10.796999999999999,
+            106.66799999999999
+          ],
+          [
+            10.796999999999999,
+            106.676
+          ],
+          [
+            10.796999999999999,
+            106.684
+          ],
+          [
+            10.806,
+            106.692
+          ],
+          [
+            10.796999999999999,
+            106.7
+          ],
+          [
+            10.796999999999999,
+            106.692
+          ],
+          [
+            10.788,
+            106.676
+          ],
+          [
+            10.788,
+            106.66799999999999
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 8,
+        "nodes": [
+          0,
+          12,
+          24,
+          47,
+          48,
+          59,
+          70,
+          60,
+          50,
+          49,
+          38,
+          37,
+          25,
+          13,
+          0
+        ],
+        "load_l": 1404,
+        "distance_m": 21294,
+        "stops": [
+          "depot",
+          "scale-011",
+          "scale-023",
+          "scale-046",
+          "scale-047",
+          "scale-058",
+          "scale-069",
+          "scale-059",
+          "scale-049",
+          "scale-048",
+          "scale-037",
+          "scale-036",
+          "scale-024",
+          "scale-012",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.779,
+            106.66799999999999
+          ],
+          [
+            10.788,
+            106.684
+          ],
+          [
+            10.806,
+            106.708
+          ],
+          [
+            10.806,
+            106.716
+          ],
+          [
+            10.815,
+            106.72399999999999
+          ],
+          [
+            10.824,
+            106.732
+          ],
+          [
+            10.815,
+            106.732
+          ],
+          [
+            10.806,
+            106.732
+          ],
+          [
+            10.806,
+            106.72399999999999
+          ],
+          [
+            10.796999999999999,
+            106.716
+          ],
+          [
+            10.796999999999999,
+            106.708
+          ],
+          [
+            10.788,
+            106.692
+          ],
+          [
+            10.779,
+            106.676
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 9,
+        "nodes": [
+          0,
+          15,
+          16,
+          17,
+          28,
+          29,
+          30,
+          40,
+          39,
+          27,
+          26,
+          14,
+          0
+        ],
+        "load_l": 1188,
+        "distance_m": 18044,
+        "stops": [
+          "depot",
+          "scale-014",
+          "scale-015",
+          "scale-016",
+          "scale-027",
+          "scale-028",
+          "scale-029",
+          "scale-039",
+          "scale-038",
+          "scale-026",
+          "scale-025",
+          "scale-013",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.779,
+            106.692
+          ],
+          [
+            10.779,
+            106.7
+          ],
+          [
+            10.779,
+            106.708
+          ],
+          [
+            10.788,
+            106.716
+          ],
+          [
+            10.788,
+            106.72399999999999
+          ],
+          [
+            10.788,
+            106.732
+          ],
+          [
+            10.796999999999999,
+            106.732
+          ],
+          [
+            10.796999999999999,
+            106.72399999999999
+          ],
+          [
+            10.788,
+            106.708
+          ],
+          [
+            10.788,
+            106.7
+          ],
+          [
+            10.779,
+            106.684
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      },
+      {
+        "vehicle": 10,
+        "nodes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          20,
+          19,
+          18,
+          0
+        ],
+        "load_l": 1404,
+        "distance_m": 16813,
+        "stops": [
+          "depot",
+          "scale-000",
+          "scale-001",
+          "scale-002",
+          "scale-003",
+          "scale-004",
+          "scale-005",
+          "scale-006",
+          "scale-007",
+          "scale-008",
+          "scale-009",
+          "scale-019",
+          "scale-018",
+          "scale-017",
+          "depot"
+        ],
+        "coordinates": [
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.77,
+            106.66
+          ],
+          [
+            10.77,
+            106.66799999999999
+          ],
+          [
+            10.77,
+            106.676
+          ],
+          [
+            10.77,
+            106.684
+          ],
+          [
+            10.77,
+            106.692
+          ],
+          [
+            10.77,
+            106.7
+          ],
+          [
+            10.77,
+            106.708
+          ],
+          [
+            10.77,
+            106.716
+          ],
+          [
+            10.77,
+            106.72399999999999
+          ],
+          [
+            10.77,
+            106.732
+          ],
+          [
+            10.779,
+            106.732
+          ],
+          [
+            10.779,
+            106.72399999999999
+          ],
+          [
+            10.779,
+            106.716
+          ],
+          [
+            10.77,
+            106.66
+          ]
+        ]
+      }
+    ],
+    "total_distance_m": 166391,
+    "unserved": [],
+    "manual_review": [],
+    "elapsed_seconds": 3.016,
+    "baseline": {
+      "method": "nearest_neighbor_capacity",
+      "routes": [
+        {
+          "vehicle": 1,
+          "nodes": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            20,
+            19,
+            18,
+            0
+          ],
+          "load_l": 1404,
+          "distance_m": 16813,
+          "stops": [
+            "depot",
+            "scale-000",
+            "scale-001",
+            "scale-002",
+            "scale-003",
+            "scale-004",
+            "scale-005",
+            "scale-006",
+            "scale-007",
+            "scale-008",
+            "scale-009",
+            "scale-019",
+            "scale-018",
+            "scale-017",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.77,
+              106.66799999999999
+            ],
+            [
+              10.77,
+              106.676
+            ],
+            [
+              10.77,
+              106.684
+            ],
+            [
+              10.77,
+              106.692
+            ],
+            [
+              10.77,
+              106.7
+            ],
+            [
+              10.77,
+              106.708
+            ],
+            [
+              10.77,
+              106.716
+            ],
+            [
+              10.77,
+              106.72399999999999
+            ],
+            [
+              10.77,
+              106.732
+            ],
+            [
+              10.779,
+              106.732
+            ],
+            [
+              10.779,
+              106.72399999999999
+            ],
+            [
+              10.779,
+              106.716
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 2,
+          "nodes": [
+            0,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            27,
+            26,
+            25,
+            24,
+            23,
+            22,
+            0
+          ],
+          "load_l": 1404,
+          "distance_m": 13800,
+          "stops": [
+            "depot",
+            "scale-010",
+            "scale-011",
+            "scale-012",
+            "scale-013",
+            "scale-014",
+            "scale-015",
+            "scale-016",
+            "scale-026",
+            "scale-025",
+            "scale-024",
+            "scale-023",
+            "scale-022",
+            "scale-021",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.779,
+              106.66
+            ],
+            [
+              10.779,
+              106.66799999999999
+            ],
+            [
+              10.779,
+              106.676
+            ],
+            [
+              10.779,
+              106.684
+            ],
+            [
+              10.779,
+              106.692
+            ],
+            [
+              10.779,
+              106.7
+            ],
+            [
+              10.779,
+              106.708
+            ],
+            [
+              10.788,
+              106.708
+            ],
+            [
+              10.788,
+              106.7
+            ],
+            [
+              10.788,
+              106.692
+            ],
+            [
+              10.788,
+              106.684
+            ],
+            [
+              10.788,
+              106.676
+            ],
+            [
+              10.788,
+              106.66799999999999
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 3,
+          "nodes": [
+            0,
+            21,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            30,
+            29,
+            0
+          ],
+          "load_l": 1404,
+          "distance_m": 20016,
+          "stops": [
+            "depot",
+            "scale-020",
+            "scale-030",
+            "scale-031",
+            "scale-032",
+            "scale-033",
+            "scale-034",
+            "scale-035",
+            "scale-036",
+            "scale-037",
+            "scale-038",
+            "scale-039",
+            "scale-029",
+            "scale-028",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.788,
+              106.66
+            ],
+            [
+              10.796999999999999,
+              106.66
+            ],
+            [
+              10.796999999999999,
+              106.66799999999999
+            ],
+            [
+              10.796999999999999,
+              106.676
+            ],
+            [
+              10.796999999999999,
+              106.684
+            ],
+            [
+              10.796999999999999,
+              106.692
+            ],
+            [
+              10.796999999999999,
+              106.7
+            ],
+            [
+              10.796999999999999,
+              106.708
+            ],
+            [
+              10.796999999999999,
+              106.716
+            ],
+            [
+              10.796999999999999,
+              106.72399999999999
+            ],
+            [
+              10.796999999999999,
+              106.732
+            ],
+            [
+              10.788,
+              106.732
+            ],
+            [
+              10.788,
+              106.72399999999999
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 4,
+          "nodes": [
+            0,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            60,
+            59,
+            58,
+            0
+          ],
+          "load_l": 1404,
+          "distance_m": 22521,
+          "stops": [
+            "depot",
+            "scale-040",
+            "scale-041",
+            "scale-042",
+            "scale-043",
+            "scale-044",
+            "scale-045",
+            "scale-046",
+            "scale-047",
+            "scale-048",
+            "scale-049",
+            "scale-059",
+            "scale-058",
+            "scale-057",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.806,
+              106.66
+            ],
+            [
+              10.806,
+              106.66799999999999
+            ],
+            [
+              10.806,
+              106.676
+            ],
+            [
+              10.806,
+              106.684
+            ],
+            [
+              10.806,
+              106.692
+            ],
+            [
+              10.806,
+              106.7
+            ],
+            [
+              10.806,
+              106.708
+            ],
+            [
+              10.806,
+              106.716
+            ],
+            [
+              10.806,
+              106.72399999999999
+            ],
+            [
+              10.806,
+              106.732
+            ],
+            [
+              10.815,
+              106.732
+            ],
+            [
+              10.815,
+              106.72399999999999
+            ],
+            [
+              10.815,
+              106.716
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 5,
+          "nodes": [
+            0,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            67,
+            66,
+            65,
+            64,
+            63,
+            62,
+            0
+          ],
+          "load_l": 1404,
+          "distance_m": 21687,
+          "stops": [
+            "depot",
+            "scale-050",
+            "scale-051",
+            "scale-052",
+            "scale-053",
+            "scale-054",
+            "scale-055",
+            "scale-056",
+            "scale-066",
+            "scale-065",
+            "scale-064",
+            "scale-063",
+            "scale-062",
+            "scale-061",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.815,
+              106.66
+            ],
+            [
+              10.815,
+              106.66799999999999
+            ],
+            [
+              10.815,
+              106.676
+            ],
+            [
+              10.815,
+              106.684
+            ],
+            [
+              10.815,
+              106.692
+            ],
+            [
+              10.815,
+              106.7
+            ],
+            [
+              10.815,
+              106.708
+            ],
+            [
+              10.824,
+              106.708
+            ],
+            [
+              10.824,
+              106.7
+            ],
+            [
+              10.824,
+              106.692
+            ],
+            [
+              10.824,
+              106.684
+            ],
+            [
+              10.824,
+              106.676
+            ],
+            [
+              10.824,
+              106.66799999999999
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 6,
+          "nodes": [
+            0,
+            61,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            70,
+            69,
+            0
+          ],
+          "load_l": 1404,
+          "distance_m": 25962,
+          "stops": [
+            "depot",
+            "scale-060",
+            "scale-070",
+            "scale-071",
+            "scale-072",
+            "scale-073",
+            "scale-074",
+            "scale-075",
+            "scale-076",
+            "scale-077",
+            "scale-078",
+            "scale-079",
+            "scale-069",
+            "scale-068",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.824,
+              106.66
+            ],
+            [
+              10.833,
+              106.66
+            ],
+            [
+              10.833,
+              106.66799999999999
+            ],
+            [
+              10.833,
+              106.676
+            ],
+            [
+              10.833,
+              106.684
+            ],
+            [
+              10.833,
+              106.692
+            ],
+            [
+              10.833,
+              106.7
+            ],
+            [
+              10.833,
+              106.708
+            ],
+            [
+              10.833,
+              106.716
+            ],
+            [
+              10.833,
+              106.72399999999999
+            ],
+            [
+              10.833,
+              106.732
+            ],
+            [
+              10.824,
+              106.732
+            ],
+            [
+              10.824,
+              106.72399999999999
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 7,
+          "nodes": [
+            0,
+            28,
+            68,
+            88,
+            87,
+            86,
+            85,
+            84,
+            83,
+            82,
+            81,
+            91,
+            92,
+            93,
+            0
+          ],
+          "load_l": 1404,
+          "distance_m": 30483,
+          "stops": [
+            "depot",
+            "scale-027",
+            "scale-067",
+            "scale-087",
+            "scale-086",
+            "scale-085",
+            "scale-084",
+            "scale-083",
+            "scale-082",
+            "scale-081",
+            "scale-080",
+            "scale-090",
+            "scale-091",
+            "scale-092",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.788,
+              106.716
+            ],
+            [
+              10.824,
+              106.716
+            ],
+            [
+              10.841999999999999,
+              106.716
+            ],
+            [
+              10.841999999999999,
+              106.708
+            ],
+            [
+              10.841999999999999,
+              106.7
+            ],
+            [
+              10.841999999999999,
+              106.692
+            ],
+            [
+              10.841999999999999,
+              106.684
+            ],
+            [
+              10.841999999999999,
+              106.676
+            ],
+            [
+              10.841999999999999,
+              106.66799999999999
+            ],
+            [
+              10.841999999999999,
+              106.66
+            ],
+            [
+              10.850999999999999,
+              106.66
+            ],
+            [
+              10.850999999999999,
+              106.66799999999999
+            ],
+            [
+              10.850999999999999,
+              106.676
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 8,
+          "nodes": [
+            0,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            90,
+            89,
+            0
+          ],
+          "load_l": 972,
+          "distance_m": 27127,
+          "stops": [
+            "depot",
+            "scale-093",
+            "scale-094",
+            "scale-095",
+            "scale-096",
+            "scale-097",
+            "scale-098",
+            "scale-099",
+            "scale-089",
+            "scale-088",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.850999999999999,
+              106.684
+            ],
+            [
+              10.850999999999999,
+              106.692
+            ],
+            [
+              10.850999999999999,
+              106.7
+            ],
+            [
+              10.850999999999999,
+              106.708
+            ],
+            [
+              10.850999999999999,
+              106.716
+            ],
+            [
+              10.850999999999999,
+              106.72399999999999
+            ],
+            [
+              10.850999999999999,
+              106.732
+            ],
+            [
+              10.841999999999999,
+              106.732
+            ],
+            [
+              10.841999999999999,
+              106.72399999999999
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 9,
+          "nodes": [
+            0,
+            0
+          ],
+          "load_l": 0,
+          "distance_m": 0,
+          "stops": [
+            "depot",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        },
+        {
+          "vehicle": 10,
+          "nodes": [
+            0,
+            0
+          ],
+          "load_l": 0,
+          "distance_m": 0,
+          "stops": [
+            "depot",
+            "depot"
+          ],
+          "coordinates": [
+            [
+              10.77,
+              106.66
+            ],
+            [
+              10.77,
+              106.66
+            ]
+          ]
+        }
+      ],
+      "distance_m": 178409,
+      "unserved": []
+    },
+    "comparison": {
+      "same_served_set": true,
+      "distance_reduction_pct": 6.74
+    }
+  },
+  "scope": "HTTP/API/static asset smoke; UI browser not exercised. All inputs simulated. No external Telegram or hardware."
+}

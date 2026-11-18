@@ -1,0 +1,134 @@
+{
+  "version": "04740a949ede9057",
+  "source": "simulated",
+  "horizon_seconds": 3600,
+  "features": [
+    "fill_now",
+    "fill_lag15",
+    "fill_lag30",
+    "rate_per_hour",
+    "opens_30min",
+    "hour_sin",
+    "hour_cos",
+    "day_sin",
+    "day_cos"
+  ],
+  "pipeline_version": "1.0",
+  "sklearn_version": "1.9.1",
+  "data_sha256": "869f18b91d4613f64b582dc6d29199597859c977d46827a260597b17f0850db2",
+  "units": "điểm phần trăm",
+  "selected_using_validation": "random_forest_depth14",
+  "rf_candidate": "random_forest_depth14",
+  "validation": {
+    "random_forest_depth8": {
+      "mae_pp": 4.745046091654301,
+      "rmse_pp": 10.673232674914129,
+      "threshold_80": {
+        "tp": 1232,
+        "fp": 223,
+        "fn": 312,
+        "tn": 7037
+      }
+    },
+    "random_forest_depth14": {
+      "mae_pp": 4.71050253559996,
+      "rmse_pp": 10.796537328007123,
+      "threshold_80": {
+        "tp": 1195,
+        "fp": 217,
+        "fn": 349,
+        "tn": 7043
+      }
+    },
+    "persistence": {
+      "mae_pp": 8.849661403907314,
+      "rmse_pp": 19.757689884323117,
+      "threshold_80": {
+        "tp": 1078,
+        "fp": 459,
+        "fn": 466,
+        "tn": 6801
+      }
+    },
+    "linear": {
+      "mae_pp": 8.364153031089764,
+      "rmse_pp": 20.811366669352125,
+      "threshold_80": {
+        "tp": 1356,
+        "fp": 708,
+        "fn": 188,
+        "tn": 6552
+      }
+    }
+  },
+  "test": {
+    "persistence": {
+      "mae_pp": 9.006655125128557,
+      "rmse_pp": 20.230302804308042,
+      "threshold_80": {
+        "tp": 1170,
+        "fp": 478,
+        "fn": 453,
+        "tn": 6650
+      }
+    },
+    "linear": {
+      "mae_pp": 8.537357657084087,
+      "rmse_pp": 21.393888573362496,
+      "threshold_80": {
+        "tp": 1457,
+        "fp": 668,
+        "fn": 166,
+        "tn": 6460
+      }
+    },
+    "random_forest_depth14": {
+      "mae_pp": 5.066971217006479,
+      "rmse_pp": 12.638933128920112,
+      "threshold_80": {
+        "tp": 1258,
+        "fp": 155,
+        "fn": 365,
+        "tn": 6973
+      }
+    }
+  },
+  "anomaly_test": {
+    "isolation_forest": {
+      "tp": 50,
+      "fp": 336,
+      "fn": 48,
+      "tn": 8317,
+      "false_positive_rate": 0.03883046342309026
+    },
+    "rule_jump_25pp": {
+      "tp": 74,
+      "fp": 190,
+      "fn": 24,
+      "tn": 8463,
+      "false_positive_rate": 0.021957702530914135
+    },
+    "interpretation": "Bất thường số đo, không phải chẩn đoán lỗi phần cứng."
+  },
+  "split": {
+    "train": {
+      "count": 26826,
+      "first_feature": 1793718800.0,
+      "last_target": 1794443300.0
+    },
+    "validation": {
+      "count": 8804,
+      "first_feature": 1794445700.0,
+      "last_target": 1794684800.0
+    },
+    "test": {
+      "count": 8751,
+      "first_feature": 1794687200.0,
+      "last_target": 1794926600.0
+    }
+  },
+  "split_policy": "Global chronological 60/20/20; purge horizon; embargo lookback+300s. Cùng nhóm thùng; không chứng minh khái quát sang thùng mới hoặc chu kỳ mới độc lập.",
+  "target_policy": "First observation at/after horizon, tolerance <=300s; discard if invalid; no interpolation.",
+  "threshold_definition": "Mỗi mẫu: dự đoán >=80 so với số đo sau chân trời >=80; không phải đánh giá thời gian tới đầy.",
+  "limitations": "Dữ liệu simulated chỉ kiểm tra pipeline. Chu kỳ thu gom có thể cắt qua các tập; chưa đánh giá holdout theo chu kỳ/thùng."
+}

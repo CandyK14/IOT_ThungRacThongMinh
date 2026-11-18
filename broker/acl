@@ -1,0 +1,9 @@
+user backend
+topic read v1/bins/+/telemetry
+topic read v1/bins/+/events
+topic write v1/bins/+/ack
+
+# Mỗi username thiết bị phải chính là bin_id. Không dùng chung credential.
+pattern write v1/bins/%u/telemetry
+pattern write v1/bins/%u/events
+pattern read v1/bins/%u/ack

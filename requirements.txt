@@ -1,0 +1,10 @@
+# Backend/demo; bộ dependency đầy đủ đã kiểm thử: requirements-lock.txt (Python 3.14).
+fastapi==0.163.1
+uvicorn==0.54.0
+pydantic==2.14.3
+scikit-learn==1.9.1
+numpy==2.5.5
+ortools==9.15.6755
+paho-mqtt==2.2.0
+httpx==0.28.1
+cryptography==50.0.2

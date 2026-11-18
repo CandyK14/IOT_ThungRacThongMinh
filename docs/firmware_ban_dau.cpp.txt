@@ -1,0 +1,307 @@
+#include <Arduino.h>
+#include <ESP32Servo.h>
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include "config.h"
+#include "telegram_root_ca.h"
+
+#define TRIG_LID 5
+#define ECHO_LID 18
+#define TRIG_FILL 19
+#define ECHO_FILL 21
+#define SERVO_PIN 13
+#define LED_RED 2
+#define LED_GREEN 4
+
+namespace {
+constexpr float BIN_HEIGHT_CM = 30.0f;
+constexpr float SENSOR_MIN_DISTANCE_CM = 2.0f;
+constexpr float SENSOR_MAX_DISTANCE_CM = 400.0f;
+constexpr float LID_OPEN_DISTANCE_CM = 20.0f;
+constexpr float LID_HOLD_DISTANCE_CM = 25.0f;
+constexpr int ALERT_ON_PERCENT = 80;
+constexpr int ALERT_OFF_PERCENT = 75;
+constexpr unsigned long SENSOR_INTERVAL_MS = 500;
+constexpr unsigned long TELEGRAM_INTERVAL_MS = 3000;
+constexpr unsigned long WIFI_RETRY_INTERVAL_MS = 10000;
+constexpr unsigned long ALERT_RETRY_INTERVAL_MS = 30000;
+constexpr unsigned long LID_HOLD_OPEN_MS = 3000;
+
+Servo lidServo;
+bool lidIsOpen = false;
+bool hasDetectedMotion = false;
+unsigned long lastMotionDetected = 0;
+unsigned long lastSensorCheck = 0;
+unsigned long lastTelegramCheck = 0;
+unsigned long lastWifiAttempt = 0;
+unsigned long lastAlertAttempt = 0;
+long lastUpdateId = 0;
+int currentPercent = 0;
+bool fillMeasurementValid = false;
+bool alertLatched = false;
+bool alertSent = false;
+bool hasEverValidFillMeasurement = false;
+
+bool readDistance(int trigPin, int echoPin, float& distanceCm) {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  const unsigned long duration = pulseIn(echoPin, HIGH, 25000);
+  if (duration == 0) {
+    return false;
+  }
+
+  distanceCm = duration * 0.0343f / 2.0f;
+  return distanceCm >= SENSOR_MIN_DISTANCE_CM &&
+         distanceCm <= SENSOR_MAX_DISTANCE_CM;
+}
+
+String urlEncode(const String& text) {
+  String encoded;
+  encoded.reserve(text.length() * 3);
+
+  for (size_t i = 0; i < text.length(); ++i) {
+    const uint8_t byte = static_cast<uint8_t>(text.charAt(i));
+    const bool isAsciiAlphaNumeric =
+        (byte >= 'a' && byte <= 'z') ||
+        (byte >= 'A' && byte <= 'Z') ||
+        (byte >= '0' && byte <= '9');
+
+    if (isAsciiAlphaNumeric || byte == '-' || byte == '_' ||
+        byte == '.' || byte == '~') {
+      encoded += static_cast<char>(byte);
+    } else {
+      char escaped[4];
+      snprintf(escaped, sizeof(escaped), "%%%02X", byte);
+      encoded += escaped;
+    }
+  }
+
+  return encoded;
+}
+
+bool sendTelegramMessage(const String& message) {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("[Telegram] Chua co ket noi Wi-Fi.");
+    return false;
+  }
+
+  WiFiClientSecure secureClient;
+  secureClient.setCACert(TELEGRAM_ROOT_CA);
+  HTTPClient http;
+  http.setConnectTimeout(4000);
+  http.setTimeout(4000);
+
+  const String url = "https://api.telegram.org/bot" + String(BOT_TOKEN) +
+                     "/sendMessage?chat_id=" + String(CHAT_ID) +
+                     "&text=" + urlEncode(message);
+  if (!http.begin(secureClient, url)) {
+    Serial.println("[Telegram] Khong khoi tao duoc HTTP client.");
+    return false;
+  }
+
+  const int responseCode = http.GET();
+  http.end();
+
+  if (responseCode >= 200 && responseCode < 300) {
+    Serial.println("[Telegram] Gui tin nhan thanh cong.");
+    return true;
+  }
+
+  Serial.print("[Telegram] Gui that bai, HTTP: ");
+  Serial.println(responseCode);
+  return false;
+}
+
+void checkTelegramMessages() {
+  if (WiFi.status() != WL_CONNECTED) {
+    return;
+  }
+
+  WiFiClientSecure secureClient;
+  secureClient.setCACert(TELEGRAM_ROOT_CA);
+  HTTPClient http;
+  http.setConnectTimeout(4000);
+  http.setTimeout(4000);
+
+  const String url = "https://api.telegram.org/bot" + String(BOT_TOKEN) +
+                     "/getUpdates?offset=" + String(lastUpdateId + 1);
+  if (!http.begin(secureClient, url)) {
+    Serial.println("[Telegram] Khong khoi tao duoc HTTP client.");
+    return;
+  }
+
+  const int responseCode = http.GET();
+  if (responseCode != 200) {
+    Serial.print("[Telegram] Khong doc duoc tin nhan, HTTP: ");
+    Serial.println(responseCode);
+    http.end();
+    return;
+  }
+
+  JsonDocument doc;
+  const DeserializationError error = deserializeJson(doc, http.getStream());
+  http.end();
+
+  if (error) {
+    Serial.print("[Telegram] JSON khong hop le: ");
+    Serial.println(error.c_str());
+    return;
+  }
+
+  if (!(doc["ok"] | false)) {
+    Serial.println("[Telegram] API tra ve trang thai that bai.");
+    return;
+  }
+
+  JsonArray results = doc["result"].as<JsonArray>();
+  for (JsonObject result : results) {
+    lastUpdateId = result["update_id"] | lastUpdateId;
+
+    JsonObject message = result["message"].as<JsonObject>();
+    const char* textValue = message["text"] | "";
+    const String senderChatId = message["chat"]["id"].as<String>();
+
+    if (senderChatId != String(CHAT_ID)) {
+      Serial.println("[Telegram] Bo qua lenh tu chat_id khong duoc phep.");
+      continue;
+    }
+
+    const String text(textValue);
+    if (text == "/status" || text == "/trangthai") {
+      String statusMessage = "TRANG THAI THUNG RAC:\n";
+      if (fillMeasurementValid) {
+        statusMessage += "- Luong rac: " + String(currentPercent) + "%\n";
+      } else if (hasEverValidFillMeasurement) {
+        statusMessage += "- Cam bien muc rac: loi (so do hop le cuoi: ";
+        statusMessage += String(currentPercent) + "%)\n";
+      } else {
+        statusMessage += "- Cam bien muc rac: chua co so do hop le\n";
+      }
+      statusMessage += "- Nap thung: ";
+      statusMessage += lidIsOpen ? "Dang mo" : "Dang dong";
+      sendTelegramMessage(statusMessage);
+    }
+  }
+}
+
+void maintainWifi(unsigned long now) {
+  if (WiFi.status() == WL_CONNECTED) {
+    return;
+  }
+
+  if (now - lastWifiAttempt >= WIFI_RETRY_INTERVAL_MS) {
+    lastWifiAttempt = now;
+    Serial.println("[Wi-Fi] Dang thu ket noi lai...");
+    WiFi.begin(WIFI_SSID, WIFI_PASS);
+  }
+}
+
+void updateLid(unsigned long now, float userDistance, bool userDistanceValid) {
+  const float detectionThreshold =
+      lidIsOpen ? LID_HOLD_DISTANCE_CM : LID_OPEN_DISTANCE_CM;
+
+  if (userDistanceValid && userDistance < detectionThreshold) {
+    lastMotionDetected = now;
+    hasDetectedMotion = true;
+  }
+
+  const bool shouldOpen =
+      hasDetectedMotion && (now - lastMotionDetected < LID_HOLD_OPEN_MS);
+  if (shouldOpen != lidIsOpen) {
+    lidIsOpen = shouldOpen;
+    lidServo.write(lidIsOpen ? 90 : 0);
+  }
+}
+
+void updateFillLevel(unsigned long now, float trashDistance, bool distanceValid) {
+  fillMeasurementValid = distanceValid;
+  if (!distanceValid) {
+    digitalWrite(LED_RED, HIGH);
+    digitalWrite(LED_GREEN, HIGH);
+    Serial.println("[CANH BAO] Khong doc duoc cam bien muc rac.");
+    return;
+  }
+
+  hasEverValidFillMeasurement = true;
+  const float distanceInBin = constrain(trashDistance, 0.0f, BIN_HEIGHT_CM);
+  const float trashHeight = BIN_HEIGHT_CM - distanceInBin;
+  currentPercent = static_cast<int>((trashHeight / BIN_HEIGHT_CM) * 100.0f);
+
+  if (currentPercent >= ALERT_ON_PERCENT) {
+    alertLatched = true;
+  } else if (currentPercent <= ALERT_OFF_PERCENT) {
+    alertLatched = false;
+    alertSent = false;
+    lastAlertAttempt = 0;
+  }
+
+  digitalWrite(LED_RED, alertLatched ? HIGH : LOW);
+  digitalWrite(LED_GREEN, alertLatched ? LOW : HIGH);
+
+  Serial.print("[MUC RAC] Khoang cach: ");
+  Serial.print(trashDistance);
+  Serial.print(" cm | Luong rac: ");
+  Serial.print(currentPercent);
+  Serial.println("%");
+
+  if (alertLatched && !alertSent &&
+      (lastAlertAttempt == 0 ||
+       now - lastAlertAttempt >= ALERT_RETRY_INTERVAL_MS)) {
+    lastAlertAttempt = now;
+    Serial.println("[CANH BAO] Dang gui canh bao muc rac cao...");
+    alertSent = sendTelegramMessage(
+        "CANH BAO: Thung rac da dat " + String(currentPercent) +
+        "%! Vui long di thu gom.");
+  }
+}
+}  // namespace
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(TRIG_LID, OUTPUT);
+  pinMode(ECHO_LID, INPUT);
+  pinMode(TRIG_FILL, OUTPUT);
+  pinMode(ECHO_FILL, INPUT);
+  pinMode(LED_RED, OUTPUT);
+  pinMode(LED_GREEN, OUTPUT);
+
+  lidServo.attach(SERVO_PIN);
+  lidServo.write(0);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  lastWifiAttempt = millis();
+  Serial.println("[Wi-Fi] Dang ket noi; thung rac van hoat dong khi Wi-Fi mat.");
+}
+
+void loop() {
+  const unsigned long now = millis();
+  maintainWifi(now);
+
+  if (now - lastSensorCheck >= SENSOR_INTERVAL_MS) {
+    lastSensorCheck = now;
+
+    float userDistance = 0.0f;
+    float trashDistance = 0.0f;
+    const bool userDistanceValid =
+        readDistance(TRIG_LID, ECHO_LID, userDistance);
+    const bool trashDistanceValid =
+        readDistance(TRIG_FILL, ECHO_FILL, trashDistance);
+
+    updateLid(now, userDistance, userDistanceValid);
+    updateFillLevel(now, trashDistance, trashDistanceValid);
+  }
+
+  if (now - lastTelegramCheck >= TELEGRAM_INTERVAL_MS) {
+    lastTelegramCheck = now;
+    checkTelegramMessages();
+  }
+}
